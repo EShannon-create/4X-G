@@ -4,11 +4,10 @@ import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Tile;
 import com.evanshannon.x.model.World;
 import com.evanshannon.x.model.pieces.*;
-import com.evanshannon.x.view.TextureHandler;
-import com.evanshannon.x.view.TileRenderer;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -21,8 +20,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
 
@@ -36,9 +34,12 @@ import static com.evanshannon.x.model.Chunk.CHUNK_SIZE;
 public class X extends SimpleApplication {
 
     private static X instance;
-    private World world = new World();
+    public World world = new World();
     private int[] oldloc;
     private Node horizon;
+    private Node moveSpheres = null;
+    private Piece selectedPiece = null;
+    private BitmapText location;
 
     public static void main(String[] args) {
         X app = new X();
@@ -95,8 +96,31 @@ public class X extends SimpleApplication {
                 Geometry g = col.getGeometry();
 
                 if(name.equals("Left Click")){
+                    if(selectedPiece != null && g.getName().charAt(0) == '^'){//This is a little silly I have to admit
+                        System.out.println("Moving");
+                        Chunk oldC = selectedPiece.getChunk();
+
+                        String[] split = g.getName().split(" ");
+                        int x = Integer.parseInt(split[1]);
+                        int y = Integer.parseInt(split[2]);//Convenient albeit silly
+
+                        selectedPiece.move(x,y);
+                        TileRenderer.rerender(rootNode, oldC);
+                        Chunk newC = selectedPiece.getChunk();
+                        TileRenderer.rerender(rootNode, newC);
+
+                        clearMoveSpheres();
+                        return;
+                    }
+
                     Piece p = Piece.getPiece(g);
-                    if(p != null) p.turn();
+                    if(p == null){
+                        clearMoveSpheres();
+                        return;
+                    }
+
+                    selectedPiece = p;
+                    makeMoveSpheres(p);
                 }
                 else{
                     IO.print(g.getLocalTranslation().toString());
@@ -121,6 +145,34 @@ public class X extends SimpleApplication {
             }
         }
     };
+    private void makeMoveSpheres(Piece piece){
+        clearMoveSpheres();
+
+        int[][] moves = piece.canMove();
+        Sphere s = new Sphere(8,8,0.125f);
+        for(int i = 0; i < moves.length; i++){
+            for(int j = 0; j < moves[i].length; j++){
+                if(moves[i][j] != 0){
+                    int x = i+piece.getX()-moves.length/2;
+                    int y = j+piece.getY()-moves.length/2;
+
+                    Geometry g = new Geometry("^ "+x+" "+y,s);
+                    Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+                    m.setColor("Color",ColorRGBA.fromRGBA255(200,200,200,255));
+                    g.setMaterial(m);
+
+                    g.setLocalTranslation(i-moves.length/2,0,j-moves.length/2);
+                    moveSpheres.attachChild(g);
+                }
+            }
+        }
+        moveSpheres.setLocalTranslation(piece.getLocation());
+        rootNode.attachChild(moveSpheres);
+    }
+    private void clearMoveSpheres(){
+        if(moveSpheres != null) rootNode.detachChild(moveSpheres);
+        moveSpheres = new Node();
+    }
 
     private void initializeLights(){
         DirectionalLight light = new DirectionalLight();
@@ -142,11 +194,21 @@ public class X extends SimpleApplication {
         pic.setHeight(width);
         pic.setPosition(settings.getWidth()/2f-width/2f,settings.getHeight()/2f-width/2f);
         guiNode.attachChild(pic);
+
+        location = new BitmapText(guiFont,false);
+        location.setSize(guiFont.getCharSet().getRenderedSize());
+        location.setColor(ColorRGBA.White);
+        guiNode.attachChild(location);
+    }
+    private void updateText(){
+        location.setText(cam.getLocation().toString());
+        location.setLocalTranslation(settings.getWidth()/2f-location.getLineWidth()/2f,settings.getHeight(),0);
     }
 
     @Override
     public void simpleUpdate(float tpf) {
         checkChunks();
+        updateText();
     }
     private void checkChunks(){
         int x = (int)MathLib.divide(cam.getLocation().x, CHUNK_SIZE);

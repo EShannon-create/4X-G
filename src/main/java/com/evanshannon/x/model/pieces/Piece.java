@@ -1,8 +1,12 @@
 package com.evanshannon.x.model.pieces;
 
 import com.evanshannon.x.MathLib;
+import com.evanshannon.x.X;
+import com.evanshannon.x.model.Chunk;
+import com.evanshannon.x.model.Tile;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
@@ -10,9 +14,10 @@ import java.util.HashSet;
 
 public abstract class Piece {
 
-    static final int NO_MOVE = 0;
+    static final int NONE = 0;
     static final int MOVE = 1;
-    static final int ATTACK = 2;
+    static final int ATCK = 2;
+    static final int GOTO = MOVE+ ATCK;
     static final int FIRE = 4;
     static final int JUMP = 8;
 
@@ -45,6 +50,9 @@ public abstract class Piece {
     public void setLocation(int x, int y){
         this.x = x;
         this.y = y;
+    }
+    public Vector3f getLocation(){
+        return new Vector3f(x+0.5f,0.125f,y-0.5f);
     }
     public void face(Direction direction){
         Node n = getModel();
@@ -80,4 +88,21 @@ public abstract class Piece {
     }
 
     public abstract int[][] canMove();
+
+    public void move(int x, int y){
+        Tile tile = X.getInstance().world.getAt(this.x,this.y,true);
+        tile.clearPiece();
+
+        tile = X.getInstance().world.getAt(x,y,true);
+        tile.setPiece(this);
+    }
+    public int getX(){
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
+    public Chunk getChunk(){
+        return X.getInstance().world.get(x/Chunk.CHUNK_SIZE,y/Chunk.CHUNK_SIZE,true);
+    }
 }

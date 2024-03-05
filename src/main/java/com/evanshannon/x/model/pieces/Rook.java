@@ -1,9 +1,8 @@
 package com.evanshannon.x.model.pieces;
 
-import com.evanshannon.x.IO;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
-import com.evanshannon.x.view.TextureHandler;
+import com.evanshannon.x.TextureHandler;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -74,5 +73,26 @@ public class Rook extends LandPiece{
     public Node getModel(){
         if(model == null) model = getModel(TextureHandler.YELLOW);
         return model;
+    }
+
+    @Override
+    public int[][] canMove() {
+        return new int[][]{
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,NONE,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO},//This is the middle :)
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE},
+                {NONE,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,NONE}
+        };
     }
 }

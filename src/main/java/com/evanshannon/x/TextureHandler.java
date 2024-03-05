@@ -1,4 +1,4 @@
-package com.evanshannon.x.view;
+package com.evanshannon.x;
 
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;

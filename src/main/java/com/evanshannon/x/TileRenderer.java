@@ -1,7 +1,5 @@
-package com.evanshannon.x.view;
+package com.evanshannon.x;
 
-import com.evanshannon.x.MathLib;
-import com.evanshannon.x.X;
 import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Tile;
 import com.evanshannon.x.model.World;

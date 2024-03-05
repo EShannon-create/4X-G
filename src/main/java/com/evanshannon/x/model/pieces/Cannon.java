@@ -2,7 +2,7 @@ package com.evanshannon.x.model.pieces;
 
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
-import com.evanshannon.x.view.TextureHandler;
+import com.evanshannon.x.TextureHandler;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -82,5 +82,16 @@ public class Cannon extends LandPiece{
     public Node getModel() {
         if(model == null) model = getModel(TextureHandler.YELLOW);
         return model;
+    }
+
+    @Override
+    public int[][] canMove() {
+        return new int[][]{
+                {MOVE,NONE,JUMP,NONE,MOVE},
+                {NONE,MOVE,MOVE,MOVE,NONE},
+                {JUMP,MOVE,NONE,MOVE,NONE},
+                {NONE,MOVE,MOVE,MOVE,NONE},
+                {MOVE,NONE,JUMP,NONE,MOVE}
+        };
     }
 }

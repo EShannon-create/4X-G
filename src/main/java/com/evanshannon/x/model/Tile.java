@@ -31,4 +31,9 @@ public class Tile {
     public boolean hasPiece(){
         return piece != null;
     }
+    public void clearPiece(){
+        this.piece.setLocation(Integer.MIN_VALUE,Integer.MIN_VALUE);//Error avoidance
+
+        this.piece = null;
+    }
 }

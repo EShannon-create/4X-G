@@ -1,12 +1,10 @@
 package com.evanshannon.x.model.pieces;
 
-import com.evanshannon.x.IO;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
-import com.evanshannon.x.view.TextureHandler;
+import com.evanshannon.x.TextureHandler;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -59,5 +57,14 @@ public class Pawn extends LandPiece{
     public Node getModel(){
         if(model == null) model = getModel(TextureHandler.YELLOW);
         return model;
+    }
+
+    @Override
+    public int[][] canMove() {
+        return new int[][]{
+                {ATCK,MOVE, ATCK},
+                {MOVE, NONE,MOVE},
+                {ATCK,MOVE, ATCK}
+        };
     }
 }
