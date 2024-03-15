@@ -3,11 +3,13 @@ package com.evanshannon.x.model.pieces;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
+import com.evanshannon.x.model.Player;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.*;
@@ -15,6 +17,11 @@ import com.jme3.texture.Texture;
 
 public class Cannon extends LandPiece{
     private Node model = null;
+
+    public Cannon(Player player) {
+        super(player);
+    }
+
     public static Node getModel(Texture texture){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
@@ -76,11 +83,13 @@ public class Cannon extends LandPiece{
         n2.attachChild(n);
         n2.setLocalScale(1f/3,1f/3,1f/3);
 
+        n2.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+
         return n2;
     }
     @Override
-    public Node getModel() {
-        if(model == null) model = getModel(TextureHandler.YELLOW);
+    public Node getModel(){
+        if(model == null) model = getModel(player.getTexture());
         return model;
     }
 

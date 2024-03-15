@@ -1,14 +1,19 @@
 package com.evanshannon.x.model;
 
 import com.evanshannon.x.MathLib;
+import com.evanshannon.x.model.pieces.Commander;
+import com.evanshannon.x.model.pieces.Piece;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class World {
 
     HashMap<Integer, HashMap<Integer,Chunk>> map;
+    private HashSet<Commander> commanders;
 
     public World(){
+        commanders = new HashSet<>();
         map = new HashMap<>();
     }
 
@@ -34,5 +39,22 @@ public class World {
         Chunk chunk = get(chunkX,chunkY,load);
         if(chunk == null) return null;
         else return chunk.getTile(tileX,tileY);
+    }
+    public void registerCommander(Commander commander){
+        commanders.add(commander);
+    }
+    public void removeCommander(Commander commander){
+        commanders.remove(commander);
+    }
+    public Piece[] getCommanders(){
+        Piece[] pieces = new Piece[commanders.size()];
+        int i = 0;
+        for(Commander c : commanders){
+            if(c instanceof Piece p){
+                pieces[i] = p;
+                i++;
+            }
+        }
+        return pieces;
     }
 }

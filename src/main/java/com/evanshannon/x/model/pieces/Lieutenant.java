@@ -3,11 +3,13 @@ package com.evanshannon.x.model.pieces;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
+import com.evanshannon.x.model.Player;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
@@ -18,6 +20,11 @@ import com.jme3.texture.Texture;
 
 public class Lieutenant extends LandPiece implements Commander{
     private Node model = null;
+
+    public Lieutenant(Player player) {
+        super(player);
+    }
+
     public static Node getModel(Texture texture){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
@@ -117,12 +124,13 @@ public class Lieutenant extends LandPiece implements Commander{
 
 
         n.setLocalScale(1f/3,1f/3,1f/3);
+        n.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
         return n;
     }
     @Override
-    public Node getModel() {
-        if(model == null) model = getModel(TextureHandler.YELLOW);
+    public Node getModel(){
+        if(model == null) model = getModel(player.getTexture());
         return model;
     }
     @Override
@@ -144,5 +152,35 @@ public class Lieutenant extends LandPiece implements Commander{
                 {NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE},
                 {GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO}
         };
+    }
+
+    @Override
+    public Piece[] getConnected() {
+        return new Piece[0];
+    }
+
+    @Override
+    public int countConnected() {
+        return 0;
+    }
+
+    @Override
+    public boolean register(Piece piece) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(Piece piece) {
+        return false;
+    }
+
+    @Override
+    public boolean inBounds(int x, int y) {
+        return false;
+    }
+
+    @Override
+    public void updateBounds() {
+
     }
 }

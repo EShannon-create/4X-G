@@ -2,14 +2,44 @@ package com.evanshannon.x;
 
 import com.evanshannon.x.model.Octave;
 import com.evanshannon.x.model.Perlin;
+import com.evanshannon.x.model.pieces.Piece;
 
 import java.awt.image.BufferedImage;
 
 public class Sandbox {
     public static void main(String[] args){
-        perlinTest();
-        octaveTest();
-        landTest();
+        combinationTest();
+    }
+    public static void combinationTest(){
+        int[][] a = {{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,0}};
+        int[][] b = {{1,1,1,1,1},{0,0,0,0,0},{1,1,1,1,1},{0,0,0,0,0},{1,1,1,1,1}};
+        int[][] c = {{0,1,0,1,0},{0,1,0,1,0},{0,1,0,1,0},{0,1,0,1,0},{0,1,0,1,0}};
+
+        int[][] d = Piece.combineMoveSets(a,b);
+        for(int i = 0; i < d.length; i++){
+            for(int j = 0; j < d[i].length; j++){
+                System.out.print(d[i][j] + "\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+        int[][] e = Piece.combineMoveSets(a,c);
+        for(int i = 0; i < e.length; i++){
+            for(int j = 0; j < e[i].length; j++){
+                System.out.print(e[i][j] + "\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+        int[][] f = Piece.combineMoveSets(d,e);
+        for(int i = 0; i < f.length; i++){
+            for(int j = 0; j < f[i].length; j++){
+                System.out.print(f[i][j] + "\t");
+            }
+            System.out.println();
+        }
     }
     public static void landTest(){
         final float threshold = 0.0f;

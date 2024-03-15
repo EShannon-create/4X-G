@@ -22,6 +22,7 @@ public class Tile {
         this.y = y;
     }
     public void setPiece(Piece piece){
+        if(this.piece != null) this.piece.onDestroy();
         this.piece = piece;
         piece.setLocation(x,y);
     }
@@ -33,7 +34,6 @@ public class Tile {
     }
     public void clearPiece(){
         this.piece.setLocation(Integer.MIN_VALUE,Integer.MIN_VALUE);//Error avoidance
-
         this.piece = null;
     }
 }

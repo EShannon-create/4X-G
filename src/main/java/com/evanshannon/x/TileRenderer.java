@@ -8,6 +8,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
@@ -15,7 +16,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 
 public class TileRenderer {
-    public static final int RENDER_DISTANCE = 10;
+    public static final int RENDER_DISTANCE = 7;
     public static void clear(Node rootnode, World world, int x, int y){
         for(int i = x-(RENDER_DISTANCE+1); i <= x+(RENDER_DISTANCE+1); i++){
             for(int j = y-(RENDER_DISTANCE+1); j <= y+(RENDER_DISTANCE+1); j++){
@@ -48,7 +49,7 @@ public class TileRenderer {
         for(int i = 0; i < Chunk.CHUNK_SIZE; i++){
             for(int j = 0; j < Chunk.CHUNK_SIZE; j++){
                 Quad q = new Quad(1,1);
-                Geometry g = new Geometry(i+" "+j,q);
+                Geometry g = new Geometry("T "+i+" "+j,q);
 
                 Material m = new Material(X.getInstance().getAssetManager(),"Common/MatDefs/Misc/Unshaded.j3md");
 
@@ -70,6 +71,8 @@ public class TileRenderer {
                 Quaternion r = new Quaternion();
                 r.fromAngles(-FastMath.HALF_PI, 0,0);
                 g.setLocalRotation(r);
+
+                g.setShadowMode(RenderQueue.ShadowMode.Receive);
 
                 node.attachChild(g);
                 //System.out.println("\tAttached " + i + " " + j + " to chunk.");

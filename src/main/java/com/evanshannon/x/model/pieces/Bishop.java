@@ -3,11 +3,13 @@ package com.evanshannon.x.model.pieces;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
+import com.evanshannon.x.model.Player;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Cylinder;
@@ -17,6 +19,11 @@ import com.jme3.texture.Texture;
 
 public class Bishop extends LandPiece{
     private Node model = null;
+
+    public Bishop(Player player) {
+        super(player);
+    }
+
     public static Node getModel(Texture texture){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
@@ -81,12 +88,13 @@ public class Bishop extends LandPiece{
         n.attachChild(g);
 
         n.setLocalScale(1f/3,1f/3,1f/3);
+        n.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
         return n;
     }
     @Override
-    public Node getModel() {
-        if(model == null) model = getModel(TextureHandler.YELLOW);
+    public Node getModel(){
+        if(model == null) model = getModel(player.getTexture());
         return model;
     }
     @Override
