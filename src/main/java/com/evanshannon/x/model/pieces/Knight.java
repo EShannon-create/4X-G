@@ -90,7 +90,7 @@ public class Knight extends LandPiece{
     }
 
     @Override
-    public int[][] canMove() {
+    public int[][] moveMap() {
         return new int[][]{
                 {NONE, GOTO, NONE, GOTO, NONE},
                 {GOTO, NONE, NONE, NONE, GOTO},

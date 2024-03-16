@@ -359,6 +359,8 @@ public class X extends SimpleApplication {
 
         inputManager.addMapping("X",new KeyTrigger(KeyInput.KEY_X));
         inputManager.addListener(keyListener,"X");
+        inputManager.addMapping("G",new KeyTrigger(KeyInput.KEY_G));
+        inputManager.addListener(keyListener,"G");
     }
 
     private final ActionListener keyListener = new ActionListener() {
@@ -374,6 +376,9 @@ public class X extends SimpleApplication {
                     else{
                         clearBounds();
                     }
+                }
+                case "G" -> {
+                    if(keyPressed) POV.endTurn();
                 }
             }
         }
@@ -417,7 +422,12 @@ public class X extends SimpleApplication {
 
                     Chunk chunk = world.get(cx,cy,false);
                     Tile tile = chunk.getTile(dx,dy);
-                    tile.setPiece(Piece.randomPiece());
+
+                    Piece piece = Piece.randomPiece();
+                    if(piece.getPlayer().onBuild()) {
+                        tile.setPiece(piece);
+                        piece.findCommander();
+                    }
 
                     TileRenderer.rerender(rootNode,chunk);
                     clearMoveSpheres();
@@ -466,6 +476,7 @@ public class X extends SimpleApplication {
             clearMoveSpheres();
             return;
         }
+        if(!p.canMove()) return;
 
         selectedPiece = p;
         makeMoveSpheres(p);

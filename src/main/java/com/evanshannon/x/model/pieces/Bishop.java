@@ -99,7 +99,7 @@ public class Bishop extends LandPiece{
         return model;
     }
     @Override
-    public int[][] canMove() {
+    public int[][] moveMap() {
         int[][] moves = new int[17][17];
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()+i;

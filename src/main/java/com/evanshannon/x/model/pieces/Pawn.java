@@ -69,7 +69,7 @@ public class Pawn extends LandPiece{
     }
 
     @Override
-    public int[][] canMove() {
+    public int[][] moveMap() {
         int[][] moves = new int[3][3];
         Tile t;
 

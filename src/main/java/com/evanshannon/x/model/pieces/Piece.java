@@ -56,6 +56,7 @@ public abstract class Piece {
     public void setLocation(int x, int y){
         this.x = x;
         this.y = y;
+        if(commander == null) findCommander();
     }
     public Vector3f getLocation(){
         return new Vector3f(x+0.5f,0.125f,y-0.5f);
@@ -93,9 +94,12 @@ public abstract class Piece {
         }
     }
 
-    public abstract int[][] canMove();
+    public boolean canMove(){
+        return player.canMove(this);
+    }
+    abstract int[][] moveMap();
     public int[][] getMoves(){
-        int[][] canMove = canMove();
+        int[][] canMove = moveMap();
 
         HashSet<int[][]> moves = new HashSet<>();
         for(Piece commander : X.getInstance().world.getCommanders()){
@@ -139,6 +143,7 @@ public abstract class Piece {
     }
 
     public void move(int x, int y){
+        if(!player.canMove(this)) return;
         Tile tile = X.getInstance().world.getAt(this.x,this.y,true);
         tile.clearPiece();
 
@@ -153,11 +158,13 @@ public abstract class Piece {
             Commander oldCommander = commander;
             commander.remove(this);
             oldCommander.updateBounds();
-            getCommander();
+            findCommander();
         }
         commander.updateBounds();
+        player.onMove(commander);
     }
     public void jump(int x, int y){
+        if(!player.canMove(this)) return;
         final int jumpX = (x-getX())/2+getX();
         final int jumpY = (y-getY())/2+getY();
 
@@ -187,7 +194,7 @@ public abstract class Piece {
     public void onDestroy(){
         if(commander != null) commander.remove(this);
     }
-    public void getCommander(){
+    public void findCommander(){
         for(Piece commander : X.getInstance().world.getCommanders()){
             if(commander instanceof Commander c && commander.getPlayer() == getPlayer() && c.inBounds(getX(),getY())){
                 c.register(this);
@@ -196,6 +203,9 @@ public abstract class Piece {
             }
         }
         noCommander();
+    }
+    public Commander getCommander(){
+        return commander;
     }
     void noCommander(){
         System.out.println("No commander!");
