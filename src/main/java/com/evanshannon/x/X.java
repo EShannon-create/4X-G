@@ -41,8 +41,10 @@ public class X extends SimpleApplication {
     private Node moveSpheres = null;
     private Piece selectedPiece = null;
     private BitmapText location;
+    private BitmapText playerInfo;
     public Player POV;
     private Node bounds = null;
+    private int turn = 1;
 
     private static final int SHADOWMAP_SIZE = 256;
 
@@ -72,7 +74,7 @@ public class X extends SimpleApplication {
         initializeHUD();
         initializeInputs();
 
-        POV = new Player("POV",TextureHandler.YELLOW);
+        POV = new Player("Yellow",TextureHandler.YELLOW);
 
         addChessBoard2();
         TileRenderer.render(rootNode,world,0,0);
@@ -96,7 +98,7 @@ public class X extends SimpleApplication {
         Piece ylieutenant = new Lieutenant(POV);
         Piece ycannon = new Cannon(POV);
 
-        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ylieutenant,ycannon};
+        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ybishop2,ylieutenant,ycannon};
 
         world.get(0,0,true).getTile(0,0).setPiece(yrook1);
         world.get(0,0,true).getTile(7,0).setPiece(yrook2);
@@ -137,7 +139,7 @@ public class X extends SimpleApplication {
         Piece rlieutenant = new Lieutenant(enemy);
         Piece rcannon = new Cannon(enemy);
 
-        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rlieutenant,rcannon};
+        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rbishop2,rlieutenant,rcannon};
 
         world.get(0,0,true).getTile(0,7).setPiece(rrook1);
         world.get(0,0,true).getTile(7,7).setPiece(rrook2);
@@ -378,7 +380,10 @@ public class X extends SimpleApplication {
                     }
                 }
                 case "G" -> {
-                    if(keyPressed) POV.endTurn();
+                    if(keyPressed){
+                        POV.endTurn();
+                        turn++;
+                    }
                 }
             }
         }
@@ -597,10 +602,18 @@ public class X extends SimpleApplication {
         location.setSize(guiFont.getCharSet().getRenderedSize());
         location.setColor(ColorRGBA.White);
         guiNode.attachChild(location);
+
+        playerInfo = new BitmapText(guiFont,false);
+        playerInfo.setSize(guiFont.getCharSet().getRenderedSize());
+        playerInfo.setColor(ColorRGBA.White);
+        guiNode.attachChild(playerInfo);
     }
     private void updateText(){
         location.setText(cam.getLocation().toString());
         location.setLocalTranslation(settings.getWidth()/2f-location.getLineWidth()/2f,settings.getHeight(),0);
+
+        playerInfo.setText("Player: "+POV.getName()+"\nBuilds: "+POV.getBuilds()+"\nTurn: " + turn);
+        playerInfo.setLocalTranslation(settings.getWidth()-playerInfo.getLineWidth()*1.1f,settings.getHeight(),0);
     }
 
     @Override

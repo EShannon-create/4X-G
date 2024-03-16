@@ -38,4 +38,7 @@ public class Player {
         builds--;
         return true;
     }
+    public int getBuilds(){
+        return builds;
+    }
 }
