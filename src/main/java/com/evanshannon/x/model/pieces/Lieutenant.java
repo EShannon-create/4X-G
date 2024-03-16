@@ -2,8 +2,8 @@ package com.evanshannon.x.model.pieces;
 
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
-import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
+import com.evanshannon.x.model.Tile;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -18,7 +18,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.scene.shape.Torus;
 import com.jme3.texture.Texture;
 
-public class Lieutenant extends LandPiece implements Commander{
+public class Lieutenant extends LandPiece{
     private Node model = null;
 
     public Lieutenant(Player player) {
@@ -135,52 +135,64 @@ public class Lieutenant extends LandPiece implements Commander{
     }
     @Override
     public int[][] canMove() {
-        return new int[][]{
-                {GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO},
-                {NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE},
-                {NONE,NONE,GOTO,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,GOTO,NONE,NONE},
-                {NONE,NONE,NONE,GOTO,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,GOTO,NONE,NONE,NONE},
-                {NONE,NONE,NONE,NONE,GOTO,NONE,NONE,GOTO,NONE,NONE,GOTO,NONE,NONE,NONE,NONE},
-                {NONE,NONE,NONE,NONE,NONE,GOTO,NONE,GOTO,NONE,GOTO,NONE,NONE,NONE,NONE,NONE},
-                {NONE,NONE,NONE,NONE,NONE,NONE,GOTO,GOTO,GOTO,NONE,NONE,NONE,NONE,NONE,NONE},
-                {GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,NONE,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO,GOTO},//This is the middle :)
-                {NONE,NONE,NONE,NONE,NONE,NONE,GOTO,GOTO,GOTO,NONE,NONE,NONE,NONE,NONE,NONE},
-                {NONE,NONE,NONE,NONE,NONE,GOTO,NONE,GOTO,NONE,GOTO,NONE,NONE,NONE,NONE,NONE},
-                {NONE,NONE,NONE,NONE,GOTO,NONE,NONE,GOTO,NONE,NONE,GOTO,NONE,NONE,NONE,NONE},
-                {NONE,NONE,NONE,GOTO,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,GOTO,NONE,NONE,NONE},
-                {NONE,NONE,GOTO,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,GOTO,NONE,NONE},
-                {NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,GOTO,NONE},
-                {GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO,NONE,NONE,NONE,NONE,NONE,NONE,GOTO}
-        };
-    }
+        int[][] moves = new int[17][17];
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX();
+            final int y = getY()+i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2][moves.length/2+i] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX();
+            final int y = getY()-i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2][moves.length/2-i] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()+i;
+            final int y = getY();
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2+i][moves.length/2] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()-i;
+            final int y = getY();
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2-i][moves.length/2] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()+i;
+            final int y = getY()+i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2+i][moves.length/2+i] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()-i;
+            final int y = getY()-i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2-i][moves.length/2-i] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()+i;
+            final int y = getY()-i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2+i][moves.length/2-i] = GOTO;
+        }
+        for(int i = 1; i < moves.length/2; i++){
+            final int x = getX()-i;
+            final int y = getY()+i;
+            Tile t = X.getInstance().world.getAt(x,y,true);
+            if(t.hasPiece() || t.isWater()) break;
+            moves[moves.length/2-i][moves.length/2+i] = GOTO;
+        }
 
-    @Override
-    public Piece[] getConnected() {
-        return new Piece[0];
-    }
-
-    @Override
-    public int countConnected() {
-        return 0;
-    }
-
-    @Override
-    public boolean register(Piece piece) {
-        return false;
-    }
-
-    @Override
-    public boolean remove(Piece piece) {
-        return false;
-    }
-
-    @Override
-    public boolean inBounds(int x, int y) {
-        return false;
-    }
-
-    @Override
-    public void updateBounds() {
-
+        return moves;
     }
 }

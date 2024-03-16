@@ -157,6 +157,14 @@ public abstract class Piece {
         }
         commander.updateBounds();
     }
+    public void jump(int x, int y){
+        final int jumpX = (x-getX())/2+getX();
+        final int jumpY = (y-getY())/2+getY();
+
+        Tile tile = X.getInstance().world.getAt(jumpX,jumpY,true);
+        tile.clearPiece();
+        move(x,y);
+    }
     public int getX(){
         return x;
     }

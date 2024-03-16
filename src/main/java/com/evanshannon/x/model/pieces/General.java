@@ -4,6 +4,7 @@ import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
+import com.evanshannon.x.model.Tile;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -146,11 +147,17 @@ public class General extends LandPiece implements Commander{
 
     @Override
     public int[][] canMove() {
-        return new int[][]{
-                {GOTO,GOTO,GOTO},
-                {GOTO,NONE,GOTO},
-                {GOTO,GOTO,GOTO}
-        };
+        int[][] moves = new int[3][3];
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                final int x = getX()+i-moves.length/2;
+                final int y = getY()+j-moves.length/2;
+
+                Tile t = X.getInstance().world.getAt(x,y,true);
+                if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
+            }
+        }
+        return moves;
     }
 
     @Override

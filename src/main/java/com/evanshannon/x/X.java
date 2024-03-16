@@ -32,10 +32,6 @@ import com.jme3.ui.Picture;
 import static com.evanshannon.x.MathLib.roll;
 import static com.evanshannon.x.model.Chunk.CHUNK_SIZE;
 
-/**
- * This is the Main Class of your Game. It should boot up your game and do initial initialisation
- * Move your Logic into AppStates or Controls or other java classes
- */
 public class X extends SimpleApplication {
 
     private static X instance;
@@ -78,8 +74,168 @@ public class X extends SimpleApplication {
 
         POV = new Player("POV",TextureHandler.YELLOW);
 
-        addExamplePieces5();
+        addChessBoard2();
         TileRenderer.render(rootNode,world,0,0);
+    }
+    private void addChessBoard2(){
+        Piece yrook1 = new Rook(POV);
+        Piece yrook2 = new Rook(POV);
+        Piece ypawn1 = new Pawn(POV);
+        Piece ypawn2 = new Pawn(POV);
+        Piece ypawn3 = new Pawn(POV);
+        Piece ypawn4 = new Pawn(POV);
+        Piece ypawn5 = new Pawn(POV);
+        Piece ypawn6 = new Pawn(POV);
+        Piece ypawn7 = new Pawn(POV);
+        Piece ypawn8 = new Pawn(POV);
+        Piece yknight1 = new Knight(POV);
+        Piece yknight2 = new Knight(POV);
+        Piece ybishop1 = new Bishop(POV);
+        Piece ybishop2 = new Bishop(POV);
+        General ygeneral = new General(POV);
+        Piece ylieutenant = new Lieutenant(POV);
+        Piece ycannon = new Cannon(POV);
+
+        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ylieutenant,ycannon};
+
+        world.get(0,0,true).getTile(0,0).setPiece(yrook1);
+        world.get(0,0,true).getTile(7,0).setPiece(yrook2);
+        world.get(0,0,true).getTile(1,0).setPiece(yknight1);
+        world.get(0,0,true).getTile(6,0).setPiece(yknight2);
+        world.get(0,0,true).getTile(2,0).setPiece(ybishop1);
+        world.get(0,0,true).getTile(5,0).setPiece(ybishop2);
+        world.get(0,0,true).getTile(3,0).setPiece(ylieutenant);
+        world.get(0,0,true).getTile(4,0).setPiece(ygeneral);
+        world.get(0,0,true).getTile(0,1).setPiece(ypawn1);
+        world.get(0,0,true).getTile(1,1).setPiece(ypawn2);
+        world.get(0,0,true).getTile(2,1).setPiece(ypawn3);
+        world.get(0,0,true).getTile(3,1).setPiece(ypawn4);
+        world.get(0,0,true).getTile(4,1).setPiece(ypawn5);
+        world.get(0,0,true).getTile(5,1).setPiece(ypawn6);
+        world.get(0,0,true).getTile(6,1).setPiece(ypawn7);
+        world.get(0,0,true).getTile(7,1).setPiece(ypawn8);
+        world.get(0,0,true).getTile(3,2).setPiece(ycannon);
+
+        for(Piece piece : ypieces) ygeneral.register(piece);
+
+        Player enemy = new Player("Enemy",TextureHandler.RED);
+        Piece rrook1 = new Rook(enemy);
+        Piece rrook2 = new Rook(enemy);
+        Piece rpawn1 = new Pawn(enemy);
+        Piece rpawn2 = new Pawn(enemy);
+        Piece rpawn3 = new Pawn(enemy);
+        Piece rpawn4 = new Pawn(enemy);
+        Piece rpawn5 = new Pawn(enemy);
+        Piece rpawn6 = new Pawn(enemy);
+        Piece rpawn7 = new Pawn(enemy);
+        Piece rpawn8 = new Pawn(enemy);
+        Piece rknight1 = new Knight(enemy);
+        Piece rknight2 = new Knight(enemy);
+        Piece rbishop1 = new Bishop(enemy);
+        Piece rbishop2 = new Bishop(enemy);
+        General rgeneral = new General(enemy);
+        Piece rlieutenant = new Lieutenant(enemy);
+        Piece rcannon = new Cannon(enemy);
+
+        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rlieutenant,rcannon};
+
+        world.get(0,0,true).getTile(0,7).setPiece(rrook1);
+        world.get(0,0,true).getTile(7,7).setPiece(rrook2);
+        world.get(0,0,true).getTile(1,7).setPiece(rknight1);
+        world.get(0,0,true).getTile(6,7).setPiece(rknight2);
+        world.get(0,0,true).getTile(2,7).setPiece(rbishop1);
+        world.get(0,0,true).getTile(5,7).setPiece(rbishop2);
+        world.get(0,0,true).getTile(3,7).setPiece(rlieutenant);
+        world.get(0,0,true).getTile(4,7).setPiece(rgeneral);
+        world.get(0,0,true).getTile(0,6).setPiece(rpawn1);
+        world.get(0,0,true).getTile(1,6).setPiece(rpawn2);
+        world.get(0,0,true).getTile(2,6).setPiece(rpawn3);
+        world.get(0,0,true).getTile(3,6).setPiece(rpawn4);
+        world.get(0,0,true).getTile(4,6).setPiece(rpawn5);
+        world.get(0,0,true).getTile(5,6).setPiece(rpawn6);
+        world.get(0,0,true).getTile(6,6).setPiece(rpawn7);
+        world.get(0,0,true).getTile(7,6).setPiece(rpawn8);
+        world.get(0,0,true).getTile(3,5).setPiece(rcannon);
+
+        for(Piece piece : rpieces) rgeneral.register(piece);
+    }
+    private void addChessBoard(){
+        Piece yrook1 = new Rook(POV);
+        Piece yrook2 = new Rook(POV);
+        Piece ypawn1 = new Pawn(POV);
+        Piece ypawn2 = new Pawn(POV);
+        Piece ypawn3 = new Pawn(POV);
+        Piece ypawn4 = new Pawn(POV);
+        Piece ypawn5 = new Pawn(POV);
+        Piece ypawn6 = new Pawn(POV);
+        Piece ypawn7 = new Pawn(POV);
+        Piece ypawn8 = new Pawn(POV);
+        Piece yknight1 = new Knight(POV);
+        Piece yknight2 = new Knight(POV);
+        Piece ybishop1 = new Bishop(POV);
+        Piece ybishop2 = new Bishop(POV);
+        General ygeneral = new General(POV);
+        Piece ylieutenant = new Lieutenant(POV);
+
+        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ylieutenant};
+
+        world.get(0,0,true).getTile(0,0).setPiece(yrook1);
+        world.get(0,0,true).getTile(7,0).setPiece(yrook2);
+        world.get(0,0,true).getTile(1,0).setPiece(yknight1);
+        world.get(0,0,true).getTile(6,0).setPiece(yknight2);
+        world.get(0,0,true).getTile(2,0).setPiece(ybishop1);
+        world.get(0,0,true).getTile(5,0).setPiece(ybishop2);
+        world.get(0,0,true).getTile(3,0).setPiece(ylieutenant);
+        world.get(0,0,true).getTile(4,0).setPiece(ygeneral);
+        world.get(0,0,true).getTile(0,1).setPiece(ypawn1);
+        world.get(0,0,true).getTile(1,1).setPiece(ypawn2);
+        world.get(0,0,true).getTile(2,1).setPiece(ypawn3);
+        world.get(0,0,true).getTile(3,1).setPiece(ypawn4);
+        world.get(0,0,true).getTile(4,1).setPiece(ypawn5);
+        world.get(0,0,true).getTile(5,1).setPiece(ypawn6);
+        world.get(0,0,true).getTile(6,1).setPiece(ypawn7);
+        world.get(0,0,true).getTile(7,1).setPiece(ypawn8);
+
+        for(Piece piece : ypieces) ygeneral.register(piece);
+
+        Player enemy = new Player("Enemy",TextureHandler.RED);
+        Piece rrook1 = new Rook(enemy);
+        Piece rrook2 = new Rook(enemy);
+        Piece rpawn1 = new Pawn(enemy);
+        Piece rpawn2 = new Pawn(enemy);
+        Piece rpawn3 = new Pawn(enemy);
+        Piece rpawn4 = new Pawn(enemy);
+        Piece rpawn5 = new Pawn(enemy);
+        Piece rpawn6 = new Pawn(enemy);
+        Piece rpawn7 = new Pawn(enemy);
+        Piece rpawn8 = new Pawn(enemy);
+        Piece rknight1 = new Knight(enemy);
+        Piece rknight2 = new Knight(enemy);
+        Piece rbishop1 = new Bishop(enemy);
+        Piece rbishop2 = new Bishop(enemy);
+        General rgeneral = new General(enemy);
+        Piece rlieutenant = new Lieutenant(enemy);
+
+        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rlieutenant};
+
+        world.get(0,0,true).getTile(0,7).setPiece(rrook1);
+        world.get(0,0,true).getTile(7,7).setPiece(rrook2);
+        world.get(0,0,true).getTile(1,7).setPiece(rknight1);
+        world.get(0,0,true).getTile(6,7).setPiece(rknight2);
+        world.get(0,0,true).getTile(2,7).setPiece(rbishop1);
+        world.get(0,0,true).getTile(5,7).setPiece(rbishop2);
+        world.get(0,0,true).getTile(3,7).setPiece(rlieutenant);
+        world.get(0,0,true).getTile(4,7).setPiece(rgeneral);
+        world.get(0,0,true).getTile(0,6).setPiece(rpawn1);
+        world.get(0,0,true).getTile(1,6).setPiece(rpawn2);
+        world.get(0,0,true).getTile(2,6).setPiece(rpawn3);
+        world.get(0,0,true).getTile(3,6).setPiece(rpawn4);
+        world.get(0,0,true).getTile(4,6).setPiece(rpawn5);
+        world.get(0,0,true).getTile(5,6).setPiece(rpawn6);
+        world.get(0,0,true).getTile(6,6).setPiece(rpawn7);
+        world.get(0,0,true).getTile(7,6).setPiece(rpawn8);
+
+        for(Piece piece : rpieces) rgeneral.register(piece);
     }
     private void addExamplePieces1(){
         world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Rook(POV));
@@ -321,7 +477,12 @@ public class X extends SimpleApplication {
         int x = Integer.parseInt(split[1]);
         int y = Integer.parseInt(split[2]);//Convenient albeit silly
 
-        selectedPiece.move(x,y);
+        int[][] moves = selectedPiece.getMoves();
+        final int i = (x-selectedPiece.getX())+moves.length/2;
+        final int j = (y-selectedPiece.getY())+moves.length/2;
+
+        if((moves[i][j] & 8) == 8) selectedPiece.jump(x,y);
+        else selectedPiece.move(x,y);
         TileRenderer.rerender(rootNode, oldC);
         Chunk newC = selectedPiece.getChunk();
         TileRenderer.rerender(rootNode, newC);
@@ -340,10 +501,15 @@ public class X extends SimpleApplication {
             makeMoveSpheres(p);
         }
 
-        System.out.println("Moving");
         Chunk oldC = selectedPiece.getChunk();
         int x = p.getX();
         int y = p.getY();
+
+        int[][] moves = selectedPiece.getMoves();
+        final int dx = x-selectedPiece.getX()+moves.length/2;
+        final int dy = y-selectedPiece.getY()+moves.length/2;
+        if(dx < 0 || dy < 0 || dx >= moves.length || dy >= moves.length) return false;
+        if((moves[dx][dy] & 2) != 2) return false;
 
         //Boiler plate code
         selectedPiece.move(x,y);

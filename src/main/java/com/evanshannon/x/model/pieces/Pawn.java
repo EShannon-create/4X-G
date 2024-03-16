@@ -4,6 +4,7 @@ import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
+import com.evanshannon.x.model.Tile;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -69,10 +70,27 @@ public class Pawn extends LandPiece{
 
     @Override
     public int[][] canMove() {
-        return new int[][]{
-                {ATCK,MOVE, ATCK},
-                {MOVE, NONE,MOVE},
-                {ATCK,MOVE, ATCK}
-        };
+        int[][] moves = new int[3][3];
+        Tile t;
+
+        t = X.getInstance().world.getAt(getX()+1,getY(),true);
+        if(!t.hasPiece() && !t.isWater()) moves[2][1] = MOVE;
+        t = X.getInstance().world.getAt(getX()-1,getY(),true);
+        if(!t.hasPiece() && !t.isWater()) moves[0][1] = MOVE;
+        t = X.getInstance().world.getAt(getX(),getY()+1,true);
+        if(!t.hasPiece() && !t.isWater()) moves[1][2] = MOVE;
+        t = X.getInstance().world.getAt(getX(),getY()-1,true);
+        if(!t.hasPiece() && !t.isWater()) moves[1][0] = MOVE;
+
+        t = X.getInstance().world.getAt(getX()+1,getY()+1,true);
+        if(t.hasPiece() && !t.isWater()) moves[2][2] = ATCK;
+        t = X.getInstance().world.getAt(getX()-1,getY()-1,true);
+        if(t.hasPiece() && !t.isWater()) moves[0][0] = ATCK;
+        t = X.getInstance().world.getAt(getX()-1,getY()+1,true);
+        if(t.hasPiece() && !t.isWater()) moves[0][2] = ATCK;
+        t = X.getInstance().world.getAt(getX()+1,getY()-1,true);
+        if(t.hasPiece() && !t.isWater()) moves[2][0] = ATCK;
+
+        return moves;
     }
 }

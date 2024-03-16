@@ -4,6 +4,7 @@ import com.evanshannon.x.ModelView;
 import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
+import com.evanshannon.x.model.Tile;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -95,12 +96,35 @@ public class Cannon extends LandPiece{
 
     @Override
     public int[][] canMove() {
-        return new int[][]{
-                {MOVE,NONE,JUMP,NONE,MOVE},
-                {NONE,MOVE,MOVE,MOVE,NONE},
-                {JUMP,MOVE,NONE,MOVE,NONE},
-                {NONE,MOVE,MOVE,MOVE,NONE},
-                {MOVE,NONE,JUMP,NONE,MOVE}
-        };
+        int[][] moves = new int[5][5];
+        for(int i = 1; i < 4; i++){
+            for(int j = 1; j < 4; j++){
+                final int x = getX()+i-moves.length/2;
+                final int y = getY()+j-moves.length/2;
+
+                Tile t = X.getInstance().world.getAt(x,y,true);
+                if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
+            }
+        }
+        Tile t;
+        Tile t2;
+
+        t = X.getInstance().world.getAt(getX()+1,getY(),true);
+        t2 = X.getInstance().world.getAt(getX()+2,getY(),true);
+        if(t.hasPiece() && t2.isLand()) moves[4][2] = JUMP;
+
+        t = X.getInstance().world.getAt(getX()-1,getY(),true);
+        t2 = X.getInstance().world.getAt(getX()-2,getY(),true);
+        if(t.hasPiece() && t2.isLand()) moves[0][2] = JUMP;
+
+        t = X.getInstance().world.getAt(getX(),getY()+1,true);
+        t2 = X.getInstance().world.getAt(getX(),getY()+2,true);
+        if(t.hasPiece() && t2.isLand()) moves[2][4] = JUMP;
+
+        t = X.getInstance().world.getAt(getX(),getY()-1,true);
+        t2 = X.getInstance().world.getAt(getX(),getY()-2,true);
+        if(t.hasPiece() && t2.isLand()) moves[2][0] = JUMP;
+
+        return moves;
     }
 }
