@@ -104,6 +104,9 @@ public class Cannon extends LandPiece{
 
                 Tile t = X.getInstance().world.getAt(x,y,true);
                 if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
+                if(t.isLand() && t.hasPiece() && t.getPiece().getPlayer() != getPlayer()){
+                    moves[i][j] = GOTO;
+                }
             }
         }
         Tile t;

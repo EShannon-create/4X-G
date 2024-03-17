@@ -28,6 +28,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
+import org.w3c.dom.Text;
 
 import static com.evanshannon.x.MathLib.roll;
 import static com.evanshannon.x.model.Chunk.CHUNK_SIZE;
@@ -44,7 +45,7 @@ public class X extends SimpleApplication {
     private BitmapText playerInfo;
     public Player POV;
     private Node bounds = null;
-    private int turn = 1;
+    private TurnHandler turnHandler;
 
     private static final int SHADOWMAP_SIZE = 256;
 
@@ -73,285 +74,26 @@ public class X extends SimpleApplication {
         initializeLights();
         initializeHUD();
         initializeInputs();
+        turnHandler = new TurnHandler(
+                new Player("Yellow",TextureHandler.YELLOW),
+                new Player("Red",TextureHandler.RED),
+                new Player("Blue",TextureHandler.BLUE),
+                new Player("Green",TextureHandler.GREEN),
+                new Player("Magenta",TextureHandler.MAGENTA),
+                new Player("Cyan",TextureHandler.CYAN),
+                new Player("Neutral",TextureHandler.WHITE),
+                new Player("Barbarian",TextureHandler.BLACK)
+        );
 
-        POV = new Player("Yellow",TextureHandler.YELLOW);
-
-        addChessBoard2();
+        initializePieces();
         TileRenderer.render(rootNode,world,0,0);
     }
-    private void addChessBoard2(){
-        Piece yrook1 = new Rook(POV);
-        Piece yrook2 = new Rook(POV);
-        Piece ypawn1 = new Pawn(POV);
-        Piece ypawn2 = new Pawn(POV);
-        Piece ypawn3 = new Pawn(POV);
-        Piece ypawn4 = new Pawn(POV);
-        Piece ypawn5 = new Pawn(POV);
-        Piece ypawn6 = new Pawn(POV);
-        Piece ypawn7 = new Pawn(POV);
-        Piece ypawn8 = new Pawn(POV);
-        Piece yknight1 = new Knight(POV);
-        Piece yknight2 = new Knight(POV);
-        Piece ybishop1 = new Bishop(POV);
-        Piece ybishop2 = new Bishop(POV);
-        General ygeneral = new General(POV);
-        Piece ylieutenant = new Lieutenant(POV);
-        Piece ycannon = new Cannon(POV);
-
-        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ybishop2,ylieutenant,ycannon};
-
-        world.get(0,0,true).getTile(0,0).setPiece(yrook1);
-        world.get(0,0,true).getTile(7,0).setPiece(yrook2);
-        world.get(0,0,true).getTile(1,0).setPiece(yknight1);
-        world.get(0,0,true).getTile(6,0).setPiece(yknight2);
-        world.get(0,0,true).getTile(2,0).setPiece(ybishop1);
-        world.get(0,0,true).getTile(5,0).setPiece(ybishop2);
-        world.get(0,0,true).getTile(3,0).setPiece(ylieutenant);
-        world.get(0,0,true).getTile(4,0).setPiece(ygeneral);
-        world.get(0,0,true).getTile(0,1).setPiece(ypawn1);
-        world.get(0,0,true).getTile(1,1).setPiece(ypawn2);
-        world.get(0,0,true).getTile(2,1).setPiece(ypawn3);
-        world.get(0,0,true).getTile(3,1).setPiece(ypawn4);
-        world.get(0,0,true).getTile(4,1).setPiece(ypawn5);
-        world.get(0,0,true).getTile(5,1).setPiece(ypawn6);
-        world.get(0,0,true).getTile(6,1).setPiece(ypawn7);
-        world.get(0,0,true).getTile(7,1).setPiece(ypawn8);
-        world.get(0,0,true).getTile(3,2).setPiece(ycannon);
-
-        for(Piece piece : ypieces) ygeneral.register(piece);
-
-        Player enemy = new Player("Enemy",TextureHandler.RED);
-        Piece rrook1 = new Rook(enemy);
-        Piece rrook2 = new Rook(enemy);
-        Piece rpawn1 = new Pawn(enemy);
-        Piece rpawn2 = new Pawn(enemy);
-        Piece rpawn3 = new Pawn(enemy);
-        Piece rpawn4 = new Pawn(enemy);
-        Piece rpawn5 = new Pawn(enemy);
-        Piece rpawn6 = new Pawn(enemy);
-        Piece rpawn7 = new Pawn(enemy);
-        Piece rpawn8 = new Pawn(enemy);
-        Piece rknight1 = new Knight(enemy);
-        Piece rknight2 = new Knight(enemy);
-        Piece rbishop1 = new Bishop(enemy);
-        Piece rbishop2 = new Bishop(enemy);
-        General rgeneral = new General(enemy);
-        Piece rlieutenant = new Lieutenant(enemy);
-        Piece rcannon = new Cannon(enemy);
-
-        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rbishop2,rlieutenant,rcannon};
-
-        world.get(0,0,true).getTile(0,7).setPiece(rrook1);
-        world.get(0,0,true).getTile(7,7).setPiece(rrook2);
-        world.get(0,0,true).getTile(1,7).setPiece(rknight1);
-        world.get(0,0,true).getTile(6,7).setPiece(rknight2);
-        world.get(0,0,true).getTile(2,7).setPiece(rbishop1);
-        world.get(0,0,true).getTile(5,7).setPiece(rbishop2);
-        world.get(0,0,true).getTile(3,7).setPiece(rlieutenant);
-        world.get(0,0,true).getTile(4,7).setPiece(rgeneral);
-        world.get(0,0,true).getTile(0,6).setPiece(rpawn1);
-        world.get(0,0,true).getTile(1,6).setPiece(rpawn2);
-        world.get(0,0,true).getTile(2,6).setPiece(rpawn3);
-        world.get(0,0,true).getTile(3,6).setPiece(rpawn4);
-        world.get(0,0,true).getTile(4,6).setPiece(rpawn5);
-        world.get(0,0,true).getTile(5,6).setPiece(rpawn6);
-        world.get(0,0,true).getTile(6,6).setPiece(rpawn7);
-        world.get(0,0,true).getTile(7,6).setPiece(rpawn8);
-        world.get(0,0,true).getTile(3,5).setPiece(rcannon);
-
-        for(Piece piece : rpieces) rgeneral.register(piece);
-    }
-    private void addChessBoard(){
-        Piece yrook1 = new Rook(POV);
-        Piece yrook2 = new Rook(POV);
-        Piece ypawn1 = new Pawn(POV);
-        Piece ypawn2 = new Pawn(POV);
-        Piece ypawn3 = new Pawn(POV);
-        Piece ypawn4 = new Pawn(POV);
-        Piece ypawn5 = new Pawn(POV);
-        Piece ypawn6 = new Pawn(POV);
-        Piece ypawn7 = new Pawn(POV);
-        Piece ypawn8 = new Pawn(POV);
-        Piece yknight1 = new Knight(POV);
-        Piece yknight2 = new Knight(POV);
-        Piece ybishop1 = new Bishop(POV);
-        Piece ybishop2 = new Bishop(POV);
-        General ygeneral = new General(POV);
-        Piece ylieutenant = new Lieutenant(POV);
-
-        Piece[] ypieces = {yrook1,yrook2,ypawn1,ypawn2,ypawn3,ypawn4,ypawn5,ypawn6,ypawn7,ypawn8,yknight1,yknight2,ybishop1,ylieutenant};
-
-        world.get(0,0,true).getTile(0,0).setPiece(yrook1);
-        world.get(0,0,true).getTile(7,0).setPiece(yrook2);
-        world.get(0,0,true).getTile(1,0).setPiece(yknight1);
-        world.get(0,0,true).getTile(6,0).setPiece(yknight2);
-        world.get(0,0,true).getTile(2,0).setPiece(ybishop1);
-        world.get(0,0,true).getTile(5,0).setPiece(ybishop2);
-        world.get(0,0,true).getTile(3,0).setPiece(ylieutenant);
-        world.get(0,0,true).getTile(4,0).setPiece(ygeneral);
-        world.get(0,0,true).getTile(0,1).setPiece(ypawn1);
-        world.get(0,0,true).getTile(1,1).setPiece(ypawn2);
-        world.get(0,0,true).getTile(2,1).setPiece(ypawn3);
-        world.get(0,0,true).getTile(3,1).setPiece(ypawn4);
-        world.get(0,0,true).getTile(4,1).setPiece(ypawn5);
-        world.get(0,0,true).getTile(5,1).setPiece(ypawn6);
-        world.get(0,0,true).getTile(6,1).setPiece(ypawn7);
-        world.get(0,0,true).getTile(7,1).setPiece(ypawn8);
-
-        for(Piece piece : ypieces) ygeneral.register(piece);
-
-        Player enemy = new Player("Enemy",TextureHandler.RED);
-        Piece rrook1 = new Rook(enemy);
-        Piece rrook2 = new Rook(enemy);
-        Piece rpawn1 = new Pawn(enemy);
-        Piece rpawn2 = new Pawn(enemy);
-        Piece rpawn3 = new Pawn(enemy);
-        Piece rpawn4 = new Pawn(enemy);
-        Piece rpawn5 = new Pawn(enemy);
-        Piece rpawn6 = new Pawn(enemy);
-        Piece rpawn7 = new Pawn(enemy);
-        Piece rpawn8 = new Pawn(enemy);
-        Piece rknight1 = new Knight(enemy);
-        Piece rknight2 = new Knight(enemy);
-        Piece rbishop1 = new Bishop(enemy);
-        Piece rbishop2 = new Bishop(enemy);
-        General rgeneral = new General(enemy);
-        Piece rlieutenant = new Lieutenant(enemy);
-
-        Piece[] rpieces = {rrook1,rrook2,rpawn1,rpawn2,rpawn3,rpawn4,rpawn5,rpawn6,rpawn7,rpawn8,rknight1,rknight2,rbishop1,rlieutenant};
-
-        world.get(0,0,true).getTile(0,7).setPiece(rrook1);
-        world.get(0,0,true).getTile(7,7).setPiece(rrook2);
-        world.get(0,0,true).getTile(1,7).setPiece(rknight1);
-        world.get(0,0,true).getTile(6,7).setPiece(rknight2);
-        world.get(0,0,true).getTile(2,7).setPiece(rbishop1);
-        world.get(0,0,true).getTile(5,7).setPiece(rbishop2);
-        world.get(0,0,true).getTile(3,7).setPiece(rlieutenant);
-        world.get(0,0,true).getTile(4,7).setPiece(rgeneral);
-        world.get(0,0,true).getTile(0,6).setPiece(rpawn1);
-        world.get(0,0,true).getTile(1,6).setPiece(rpawn2);
-        world.get(0,0,true).getTile(2,6).setPiece(rpawn3);
-        world.get(0,0,true).getTile(3,6).setPiece(rpawn4);
-        world.get(0,0,true).getTile(4,6).setPiece(rpawn5);
-        world.get(0,0,true).getTile(5,6).setPiece(rpawn6);
-        world.get(0,0,true).getTile(6,6).setPiece(rpawn7);
-        world.get(0,0,true).getTile(7,6).setPiece(rpawn8);
-
-        for(Piece piece : rpieces) rgeneral.register(piece);
-    }
-    private void addExamplePieces1(){
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Rook(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Pawn(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Knight(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Bishop(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new General(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Lieutenant(POV));
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Cannon(POV));
-
-        Player enemy = new Player("Enemy",TextureHandler.RED);
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Rook(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Pawn(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Knight(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Bishop(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new General(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Lieutenant(enemy));
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(new Cannon(enemy));
-    }
-    private void addExamplePieces3(){
-        Piece rook = new Rook(POV);
-        Piece pawn = new Pawn(POV);
-        General general = new General(POV);
-
-        world.get(0,0,true).getTile(6,4).setPiece(general);
-        world.get(0,0,true).getTile(2,6).setPiece(rook);
-        world.get(0,0,true).getTile(5,1).setPiece(pawn);
-        general.register(rook);
-        general.register(pawn);
-    }
-    private void addExamplePieces5(){
-        Piece rook = new Rook(POV);
-        Piece pawn = new Pawn(POV);
-        Piece knight = new Knight(POV);
-        Piece bishop = new Bishop(POV);
-        General general = new General(POV);
-        Piece lieutenant = new Lieutenant(POV);
-        Piece cannon = new Cannon(POV);
-
-        Piece[] pieces = {rook,pawn,knight,bishop,lieutenant,cannon};
-
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(general);
-        for(Piece piece : pieces) world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(piece);
-        for(Piece piece : pieces){
-            if(!general.register(piece)) piece.move(-5,-5);
+    private void initializePieces(){
+        int i = 0;
+        for(Player player : turnHandler.getPlayers()){
+            world.getAt(i,i,true).setPiece(new General(player));
+            i++;
         }
-
-        Player p = new Player("Red",TextureHandler.RED);
-        Piece rook2 = new Rook(p);
-        Piece pawn2 = new Pawn(p);
-        Piece knight2 = new Knight(p);
-        Piece bishop2 = new Bishop(p);
-        General general2 = new General(p);
-        Piece lieutenant2 = new Lieutenant(p);
-        Piece cannon2 = new Cannon(p);
-
-        Piece[] pieces2 = {rook2,pawn2,knight2,bishop2,lieutenant2,cannon2};
-
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(general2);
-        for(Piece piece : pieces2) world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(piece);
-        for(Piece piece : pieces2){
-            if(!general2.register(piece)) piece.move(-5,-5);
-        }
-    }
-    private void addExamplePieces4(){
-        Piece rook = new Rook(POV);
-        Piece pawn = new Pawn(POV);
-        Piece knight = new Knight(POV);
-        Piece bishop = new Bishop(POV);
-        General general = new General(POV);
-        Piece lieutenant = new Lieutenant(POV);
-        Piece cannon = new Cannon(POV);
-
-        Piece[] pieces = {rook,pawn,knight,bishop,lieutenant,cannon};
-
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(general);
-        for(Piece piece : pieces) world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(piece);
-        for(Piece piece : pieces){
-            if(!general.register(piece)) piece.move(-5,-5);
-        }
-
-        Piece rook2 = new Rook(POV);
-        Piece pawn2 = new Pawn(POV);
-        Piece knight2 = new Knight(POV);
-        Piece bishop2 = new Bishop(POV);
-        General general2 = new General(POV);
-        Piece lieutenant2 = new Lieutenant(POV);
-        Piece cannon2 = new Cannon(POV);
-
-        Piece[] pieces2 = {rook2,pawn2,knight2,bishop2,lieutenant2,cannon2};
-
-        world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(general2);
-        for(Piece piece : pieces2) world.get(1,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(piece);
-        for(Piece piece : pieces2){
-            if(!general2.register(piece)) piece.move(-5,-5);
-        }
-    }
-    private void addExamplePieces2(){
-        Piece rook = new Rook(POV);
-        Piece pawn = new Pawn(POV);
-        Piece knight = new Knight(POV);
-        Piece bishop = new Bishop(POV);
-        General general = new General(POV);
-        Piece lieutenant = new Lieutenant(POV);
-        Piece cannon = new Cannon(POV);
-
-        Piece[] pieces = {rook,pawn,knight,bishop,lieutenant,cannon};
-
-        world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(general);
-        for(Piece piece : pieces) world.get(0,0,true).getTile(roll(0,CHUNK_SIZE),roll(0,CHUNK_SIZE)).setPiece(piece);
-        for(Piece piece : pieces){
-            if(!general.register(piece)) piece.move(-5,-5);
-        }
-        System.out.println("Done!");
     }
     private void initializeInputs(){
         inputManager.addMapping("Left Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
@@ -381,8 +123,7 @@ public class X extends SimpleApplication {
                 }
                 case "G" -> {
                     if(keyPressed){
-                        POV.endTurn();
-                        turn++;
+                        turnHandler.endTurn();
                     }
                 }
             }
@@ -428,7 +169,7 @@ public class X extends SimpleApplication {
                     Chunk chunk = world.get(cx,cy,false);
                     Tile tile = chunk.getTile(dx,dy);
 
-                    Piece piece = Piece.randomPiece();
+                    Piece piece = Piece.randomPiece(turnHandler.getPOV());
                     if(piece.getPlayer().onBuild()) {
                         tile.setPiece(piece);
                         piece.findCommander();
@@ -481,6 +222,7 @@ public class X extends SimpleApplication {
             clearMoveSpheres();
             return;
         }
+        if(p.getPlayer() != turnHandler.getPOV()) return;
         if(!p.canMove()) return;
 
         selectedPiece = p;
@@ -515,6 +257,7 @@ public class X extends SimpleApplication {
         if(p.getPlayer() == selectedPiece.getPlayer()){
             selectedPiece = p;
             makeMoveSpheres(p);
+            return true;
         }
 
         Chunk oldC = selectedPiece.getChunk();
@@ -525,7 +268,7 @@ public class X extends SimpleApplication {
         final int dx = x-selectedPiece.getX()+moves.length/2;
         final int dy = y-selectedPiece.getY()+moves.length/2;
         if(dx < 0 || dy < 0 || dx >= moves.length || dy >= moves.length) return false;
-        if((moves[dx][dy] & 2) != 2) return false;
+        if((moves[dx][dy] & Piece.ATCK) != Piece.ATCK) return false;
 
         //Boiler plate code
         selectedPiece.move(x,y);
@@ -612,7 +355,7 @@ public class X extends SimpleApplication {
         location.setText(cam.getLocation().toString());
         location.setLocalTranslation(settings.getWidth()/2f-location.getLineWidth()/2f,settings.getHeight(),0);
 
-        playerInfo.setText("Player: "+POV.getName()+"\nBuilds: "+POV.getBuilds()+"\nTurn: " + turn);
+        playerInfo.setText("Player: "+turnHandler.getPOV().getName()+"\nBuilds: "+turnHandler.getPOV().getBuilds()+"\nTurn: " + turnHandler.getTurn());
         playerInfo.setLocalTranslation(settings.getWidth()-playerInfo.getLineWidth()*1.1f,settings.getHeight(),0);
     }
 

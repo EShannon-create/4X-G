@@ -117,6 +117,7 @@ public class General extends LandPiece implements Commander{
         g.setLocalTranslation(0,4+2f/3f+0.175f+0.125f,0);
         n.attachChild(g);
 
+        /*
         Sphere ball = new Sphere(samples, samples, 0.075f);
 
         final int amount = 12;
@@ -132,6 +133,8 @@ public class General extends LandPiece implements Commander{
             g.setLocalTranslation(x,4.6f+0.125f,z);
             n.attachChild(g);
         }
+
+         */
 
 
         n.setLocalScale(1f/3,1f/3,1f/3);
@@ -155,6 +158,9 @@ public class General extends LandPiece implements Commander{
 
                 Tile t = X.getInstance().world.getAt(x,y,true);
                 if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
+                if(t.isLand() && t.hasPiece() && t.getPiece().getPlayer() != getPlayer()){
+                    moves[i][j] = GOTO;
+                }
             }
         }
         return moves;

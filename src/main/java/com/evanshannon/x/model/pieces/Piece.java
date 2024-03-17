@@ -15,12 +15,12 @@ import java.util.HashSet;
 
 public abstract class Piece {
 
-    static final int NONE = 0;
-    static final int MOVE = 1;
-    static final int ATCK = 2;
-    static final int GOTO = MOVE+ ATCK;
-    static final int FIRE = 4;
-    static final int JUMP = 8;
+    public static final int NONE = 0;
+    public static final int MOVE = 1;
+    public static final int ATCK = 2;
+    public static final int GOTO = MOVE+ ATCK;
+    public static final int FIRE = 4;
+    public static final int JUMP = 8;
 
     public enum Direction{NORTH,SOUTH,EAST,WEST}
 
@@ -81,16 +81,16 @@ public abstract class Piece {
             case 3 -> face(Direction.WEST);
         }
     }
-    public static Piece randomPiece(){
+    public static Piece randomPiece(Player player){
         int i = MathLib.roll(0,7);
         switch(i){
-            default: case 0: return new Pawn(X.getInstance().POV);
-            case 1: return new Rook(X.getInstance().POV);
-            case 2: return new Bishop(X.getInstance().POV);
-            case 3: return new Knight(X.getInstance().POV);
-            case 4: return new Lieutenant(X.getInstance().POV);
-            case 5: return new General(X.getInstance().POV);
-            case 6: return new Cannon(X.getInstance().POV);
+            default: case 0: return new Pawn(player);
+            case 1: return new Rook(player);
+            case 2: return new Bishop(player);
+            case 3: return new Knight(player);
+            case 4: return new Lieutenant(player);
+            case 5: return new General(player);
+            case 6: return new Cannon(player);
         }
     }
 
@@ -152,6 +152,7 @@ public abstract class Piece {
 
         if(this instanceof Commander c){
             c.updateBounds();
+            player.onMove(c);
             return;
         }
         if(!commander.inBounds(x,y)) {
