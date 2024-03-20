@@ -3,6 +3,7 @@ package com.evanshannon.x;
 import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Tile;
 import com.evanshannon.x.model.World;
+import com.evanshannon.x.model.buildings.Building;
 import com.evanshannon.x.model.pieces.Piece;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -80,6 +81,12 @@ public class TileRenderer {
                     Piece p = tile.getPiece();
                     Node model = p.getModel();
                     model.setLocalTranslation(i+0.5f,0,j-0.5f);
+                    node.attachChild(model);
+                }
+                if(tile.hasBuilding()){
+                    Building b = tile.getBuilding();
+                    Node model = b.getModel();
+                    model.setLocalTranslation(i,0,j);
                     node.attachChild(model);
                 }
             }

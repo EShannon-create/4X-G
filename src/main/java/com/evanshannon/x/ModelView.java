@@ -1,13 +1,19 @@
 package com.evanshannon.x;
 
+import com.evanshannon.x.model.buildings.Farm;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
 
 /**
@@ -48,27 +54,28 @@ public class ModelView extends SimpleApplication {
         ambientLight.setEnabled(true);
         rootNode.addLight(ambientLight);
 
-        Node rook = Rook.getModel(TextureHandler.RED);
-        rook.setLocalTranslation(1,0,0);
-        Node pawn = Pawn.getModel(TextureHandler.RED);
-        pawn.setLocalTranslation(2,0,0);
-        Node bishop = Bishop.getModel(TextureHandler.RED);
-        bishop.setLocalTranslation(3,0,0);
-        Node knight = Knight.getModel(TextureHandler.RED);
-        knight.setLocalTranslation(4,0,0);
-        Node queen = Lieutenant.getModel(TextureHandler.RED);
-        queen.setLocalTranslation(5,0,0);
-        Node king = General.getModel(TextureHandler.RED);
-        king.setLocalTranslation(6,0,0);
-        Node cannon = Cannon.getModel(TextureHandler.RED);
+        Node farm = Farm.getModel(TextureHandler.RED,6);
 
-        rootNode.attachChild(rook);
-        rootNode.attachChild(pawn);
-        rootNode.attachChild(bishop);
-        rootNode.attachChild(knight);
-        rootNode.attachChild(queen);
-        rootNode.attachChild(king);
-        rootNode.attachChild(cannon);
+        Quad q = new Quad(1f,1f);
+        Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+        m.setTexture("ColorMap",TextureHandler.GRASS_LIGHT);
+        Geometry g = new Geometry("G",q);
+        g.setMaterial(m);
+        Quaternion r = new Quaternion();
+        r.fromAngles(-FastMath.HALF_PI, 0,0);
+        g.setLocalRotation(r);
+
+        Quad q2 = new Quad(1f,1f);
+        Geometry g2 = new Geometry("G",q2);
+        g2.setMaterial(m);
+        Quaternion r2 = new Quaternion();
+        r2.fromAngles(FastMath.HALF_PI, 0,0);
+        g2.setLocalRotation(r2);
+        g2.setLocalTranslation(0,0,-1);
+
+        rootNode.attachChild(farm);
+        rootNode.attachChild(g);
+        rootNode.attachChild(g2);
     }
     @Override
     public void simpleUpdate(float tpf) {

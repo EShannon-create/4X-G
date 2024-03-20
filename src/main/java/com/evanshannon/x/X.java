@@ -4,6 +4,8 @@ import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
 import com.evanshannon.x.model.World;
+import com.evanshannon.x.model.buildings.Building;
+import com.evanshannon.x.model.buildings.Farm;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResult;
@@ -92,6 +94,10 @@ public class X extends SimpleApplication {
         int i = 0;
         for(Player player : turnHandler.getPlayers()){
             world.getAt(i,i,true).setPiece(new General(player));
+            Tile t = world.getAt(7-i,i,true);
+            Farm f = new Farm(player,t);
+            f.upgrade();
+            f.upgrade();
             i++;
         }
     }
