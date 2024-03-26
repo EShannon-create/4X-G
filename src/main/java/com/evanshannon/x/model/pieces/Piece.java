@@ -195,15 +195,16 @@ public abstract class Piece {
     public void onDestroy(){
         if(commander != null) commander.remove(this);
     }
-    public void findCommander(){
+    public boolean findCommander(){
         for(Piece commander : X.getInstance().world.getCommanders()){
             if(commander instanceof Commander c && commander.getPlayer() == getPlayer() && c.inBounds(getX(),getY())){
                 c.register(this);
                 System.out.println("New commander!");
-                return;
+                return true;
             }
         }
         noCommander();
+        return false;
     }
     public Commander getCommander(){
         return commander;

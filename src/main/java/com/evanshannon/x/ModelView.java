@@ -1,6 +1,9 @@
 package com.evanshannon.x;
 
+import com.evanshannon.x.model.buildings.Barracks;
+import com.evanshannon.x.model.buildings.Factory;
 import com.evanshannon.x.model.buildings.Farm;
+import com.evanshannon.x.model.buildings.Wall;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
@@ -15,6 +18,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
 
 /**
  * This is the Main Class of your Game. It should boot up your game and do initial initialisation
@@ -54,7 +58,11 @@ public class ModelView extends SimpleApplication {
         ambientLight.setEnabled(true);
         rootNode.addLight(ambientLight);
 
-        Node farm = Farm.getModel(TextureHandler.RED,6);
+        Node building;
+        //building = Farm.getModel(TextureHandler.RED,6);
+        //building = Factory.getModel(TextureHandler.RED);
+        //building = Barracks.getModel(TextureHandler.RED);
+        building = Wall.getTower(TextureHandler.RED);
 
         Quad q = new Quad(1f,1f);
         Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
@@ -73,7 +81,7 @@ public class ModelView extends SimpleApplication {
         g2.setLocalRotation(r2);
         g2.setLocalTranslation(0,0,-1);
 
-        rootNode.attachChild(farm);
+        rootNode.attachChild(building);
         rootNode.attachChild(g);
         rootNode.attachChild(g2);
     }

@@ -1,6 +1,8 @@
 package com.evanshannon.x.model;
 
+import com.evanshannon.x.X;
 import com.evanshannon.x.model.buildings.Building;
+import com.evanshannon.x.model.buildings.Wall;
 import com.evanshannon.x.model.pieces.Piece;
 
 public class Tile {
@@ -45,8 +47,27 @@ public class Tile {
     public boolean hasBuilding(){
         return building != null;
     }
+    public boolean hasWall(){
+        return building instanceof Wall;
+    }
     public void clearPiece(){
         this.piece.setLocation(Integer.MIN_VALUE,Integer.MIN_VALUE);//Error avoidance
         this.piece = null;
+    }
+    public Tile getNorth(){
+        return X.getInstance().world.getAt(x,y+1,true);
+    }
+    public Tile getSouth(){
+        return X.getInstance().world.getAt(x,y-1,true);
+    }
+    public Tile getEast(){
+        return X.getInstance().world.getAt(x+1,y,true);
+    }
+    public Tile getWest(){
+        return X.getInstance().world.getAt(x-1,y,true);
+    }
+    public Player getOwner(){
+        if(building != null) return building.getOwner();
+        else return null;
     }
 }

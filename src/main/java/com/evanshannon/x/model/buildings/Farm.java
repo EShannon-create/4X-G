@@ -9,7 +9,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Triangle;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -20,13 +19,9 @@ import com.jme3.texture.Texture;
 public class Farm extends Building{
     private static final int MAX_ROWS = 6;
     private Node model = null;
-    private Player player;
-    private Tile tile;
     private int farmRows;
     public Farm(Player player, Tile tile){
-        this.tile = tile;
-        tile.setBuilding(this);
-        this.player = player;
+        super(player,tile);
         farmRows = 1;
     }
     public static Node getModel(Texture texture, int farmRows){

@@ -4,8 +4,7 @@ import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
 import com.evanshannon.x.model.World;
-import com.evanshannon.x.model.buildings.Building;
-import com.evanshannon.x.model.buildings.Farm;
+import com.evanshannon.x.model.buildings.*;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.collision.CollisionResult;
@@ -93,11 +92,14 @@ public class X extends SimpleApplication {
     private void initializePieces(){
         int i = 0;
         for(Player player : turnHandler.getPlayers()){
-            world.getAt(i,i,true).setPiece(new General(player));
-            Tile t = world.getAt(7-i,i,true);
-            Farm f = new Farm(player,t);
+            Tile t1 = world.getAt(0,i,true);
+            new Factory(player,t1);
+            Tile t2 = world.getAt(1,i,true);
+            Farm f = new Farm(player,t2);
             f.upgrade();
             f.upgrade();
+            Tile t3 = world.getAt(2,i,true);
+            new Barracks(player,t3);
             i++;
         }
     }
@@ -130,6 +132,8 @@ public class X extends SimpleApplication {
                 case "G" -> {
                     if(keyPressed){
                         turnHandler.endTurn();
+                        selectedPiece = null;
+                        clearMoveSpheres();
                     }
                 }
             }
@@ -175,13 +179,13 @@ public class X extends SimpleApplication {
                     Chunk chunk = world.get(cx,cy,false);
                     Tile tile = chunk.getTile(dx,dy);
 
-                    Piece piece = Piece.randomPiece(turnHandler.getPOV());
-                    if(piece.getPlayer().onBuild()) {
-                        tile.setPiece(piece);
-                        piece.findCommander();
-                    }
+                    new Wall(turnHandler.getPOV(),tile);
 
                     TileRenderer.rerender(rootNode,chunk);
+                    if(dx == 0) TileRenderer.rerender(rootNode,world.get(cx-1,cy,true));
+                    if(dx == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx+1,cy,true));
+                    if(dy == 0) TileRenderer.rerender(rootNode,world.get(cx,cy-1,true));
+                    if(dy == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx,cy+1,true));
                     clearMoveSpheres();
                 }
             }
