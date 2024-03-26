@@ -149,7 +149,7 @@ public class General extends LandPiece implements Commander{
     }
 
     @Override
-    public int[][] moveMap() {
+    public int[][] moveMap(boolean onMove) {
         int[][] moves = new int[3][3];
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
@@ -157,6 +157,8 @@ public class General extends LandPiece implements Commander{
                 final int y = getY()+j-moves.length/2;
 
                 Tile t = X.getInstance().world.getAt(x,y,true);
+                if(t.hasWall() && onMove) continue;
+                if(t.hasBuilding() && onMove) continue;
                 if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
                 if(t.isLand() && t.hasPiece() && t.getPiece().getPlayer() != getPlayer()){
                     moves[i][j] = GOTO;

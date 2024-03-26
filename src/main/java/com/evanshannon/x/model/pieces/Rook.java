@@ -86,13 +86,15 @@ public class Rook extends LandPiece{
     }
 
     @Override
-    public int[][] moveMap() {
+    public int[][] moveMap(boolean onMove) {
         int[][] moves = new int[17][17];
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX();
             final int y = getY()+i;
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
+            if(t.hasWall()) break;
+            if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2+i] = GOTO;
             if(t.hasPiece()) break;
         }
@@ -101,6 +103,8 @@ public class Rook extends LandPiece{
             final int y = getY()-i;
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
+            if(t.hasWall()) break;
+            if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2-i] = GOTO;
             if(t.hasPiece()) break;
         }
@@ -109,6 +113,8 @@ public class Rook extends LandPiece{
             final int y = getY();
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
+            if(t.hasWall()) break;
+            if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2+i][moves.length/2] = GOTO;
             if(t.hasPiece()) break;
         }
@@ -117,6 +123,8 @@ public class Rook extends LandPiece{
             final int y = getY();
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
+            if(t.hasWall()) break;
+            if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2-i][moves.length/2] = GOTO;
             if(t.hasPiece()) break;
         }

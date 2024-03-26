@@ -20,8 +20,8 @@ public class Farm extends Building{
     private static final int MAX_ROWS = 6;
     private Node model = null;
     private int farmRows;
-    public Farm(Player player, Tile tile){
-        super(player,tile);
+    public Farm(Tile tile){
+        super(tile);
         farmRows = 1;
     }
     public static Node getModel(Texture texture, int farmRows){
@@ -148,7 +148,7 @@ public class Farm extends Building{
     @Override
     public Node getModel(){
         if(model == null){
-            model = getModel(player.getTexture(),farmRows);
+            model = getModel(getTexture(),farmRows);
         }
         return model;
     }

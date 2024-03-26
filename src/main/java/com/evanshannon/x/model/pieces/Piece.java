@@ -25,6 +25,7 @@ public abstract class Piece {
     public enum Direction{NORTH,SOUTH,EAST,WEST}
 
     private static HashSet<Piece> allPieces = new HashSet<>();
+    private HashSet<Tile> possessing = new HashSet<>();
 
     private int x = Integer.MIN_VALUE;
     private int y = Integer.MIN_VALUE;
@@ -39,6 +40,7 @@ public abstract class Piece {
     public Piece(Player player){
         allPieces.add(this);
         this.player = player;
+        updatePossession();
     }
 
     public static Piece getPiece(Geometry geometry){
@@ -97,9 +99,15 @@ public abstract class Piece {
     public boolean canMove(){
         return player.canMove(this);
     }
-    abstract int[][] moveMap();
+    public int[][] moveMap(){
+        return moveMap(true);
+    }
+    abstract int[][] moveMap(boolean onMove);
     public int[][] getMoves(){
-        int[][] canMove = moveMap();
+        return getMoves(true);
+    }
+    public int[][] getMoves(boolean onMove){
+        int[][] canMove = moveMap(onMove);
 
         HashSet<int[][]> moves = new HashSet<>();
         for(Piece commander : X.getInstance().world.getCommanders()){
@@ -149,10 +157,13 @@ public abstract class Piece {
 
         tile = X.getInstance().world.getAt(x,y,true);
         tile.setPiece(this);
+        this.x = x;
+        this.y = y;
 
         if(this instanceof Commander c){
             c.updateBounds();
             player.onMove(c);
+            updatePossession();
             return;
         }
         if(!commander.inBounds(x,y)) {
@@ -163,6 +174,7 @@ public abstract class Piece {
         }
         commander.updateBounds();
         player.onMove(commander);
+        updatePossession();
     }
     public void jump(int x, int y){
         if(!player.canMove(this)) return;
@@ -171,6 +183,7 @@ public abstract class Piece {
 
         Tile tile = X.getInstance().world.getAt(jumpX,jumpY,true);
         tile.clearPiece();
+        tile.setBuilding(null);
         move(x,y);
     }
     public int getX(){
@@ -211,5 +224,22 @@ public abstract class Piece {
     }
     void noCommander(){
         System.out.println("No commander!");
+    }
+    public void updatePossession(){
+        for(Tile i : possessing){
+            i.removeControl(this);
+        }
+        possessing = new HashSet<>();
+        int[][] moves = getMoves(false);
+        for(int i = 0; i < moves.length; i++){
+            for(int j = 0; j < moves[i].length; j++){
+                if(moves[i][j] == NONE) continue;
+
+                final int x = i+this.x-moves.length/2;
+                final int y = j+this.y-moves.length/2;
+                final Tile t = X.getInstance().world.getAt(x,y,true);
+                t.addControl(this);
+            }
+        }
     }
 }

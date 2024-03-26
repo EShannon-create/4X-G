@@ -86,9 +86,9 @@ public class Barracks extends Building{
     }
     @Override
     public Node getModel() {
-        return getModel(player.getTexture());
+        return getModel(getTexture());
     }
-    public Barracks(Player player, Tile tile){
-        super(player,tile);
+    public Barracks(Tile tile){
+        super(tile);
     }
 }

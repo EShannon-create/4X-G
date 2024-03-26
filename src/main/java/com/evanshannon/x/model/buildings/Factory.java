@@ -73,11 +73,11 @@ public class Factory extends Building {
 
         return n;
     }
-    public Factory(Player player, Tile tile){
-        super(player,tile);
+    public Factory(Tile tile){
+        super(tile);
     }
     @Override
     public Node getModel() {
-        return getModel(player.getTexture());
+        return getModel(getTexture());
     }
 }

@@ -14,7 +14,7 @@ public class Admiral extends SeaPiece implements Commander{
     }
 
     @Override
-    public int[][] moveMap() {
+    public int[][] moveMap(boolean onMove) {
         return new int[][]{
                 {GOTO,GOTO,GOTO,GOTO,GOTO},
                 {GOTO,GOTO,GOTO,GOTO,GOTO},

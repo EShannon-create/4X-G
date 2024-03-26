@@ -480,27 +480,27 @@ public class Wall extends Building {
         return n;
     }
 
-    public Wall(Player player, Tile tile){
-        super(player,tile);
+    public Wall(Tile tile){
+        super(tile);
     }
     public Node getModel(){
-        Texture texture = player.getTexture();
+        Texture texture = getTexture();
 
         final boolean east; final boolean west; final boolean north; final boolean south;
         int count = 0;
-        if(tile.getEast().hasWall() && tile.getEast().getOwner() == player){
+        if(tile.getEast().hasWall() && tile.getEast().getOwner() == getOwner()){
             count++;
             east = true;
         } else east = false;
-        if(tile.getWest().hasWall() && tile.getWest().getOwner() == player){
+        if(tile.getWest().hasWall() && tile.getWest().getOwner() == getOwner()){
             count++;
             west = true;
         } else west = false;
-        if(tile.getNorth().hasWall() && tile.getNorth().getOwner() == player){
+        if(tile.getNorth().hasWall() && tile.getNorth().getOwner() == getOwner()){
             count++;
             north = true;
         } else north = false;
-        if(tile.getSouth().hasWall() && tile.getSouth().getOwner() == player){
+        if(tile.getSouth().hasWall() && tile.getSouth().getOwner() == getOwner()){
             count++;
             south = true;
         } else south = false;

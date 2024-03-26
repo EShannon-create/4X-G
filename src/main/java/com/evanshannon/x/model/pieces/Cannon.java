@@ -95,7 +95,7 @@ public class Cannon extends LandPiece{
     }
 
     @Override
-    public int[][] moveMap() {
+    public int[][] moveMap(boolean onMove) {
         int[][] moves = new int[5][5];
         for(int i = 1; i < 4; i++){
             for(int j = 1; j < 4; j++){
@@ -103,6 +103,7 @@ public class Cannon extends LandPiece{
                 final int y = getY()+j-moves.length/2;
 
                 Tile t = X.getInstance().world.getAt(x,y,true);
+                if(t.hasBuilding() && onMove) continue;
                 if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
                 if(t.isLand() && t.hasPiece() && t.getPiece().getPlayer() != getPlayer()){
                     moves[i][j] = GOTO;
@@ -114,19 +115,19 @@ public class Cannon extends LandPiece{
 
         t = X.getInstance().world.getAt(getX()+1,getY(),true);
         t2 = X.getInstance().world.getAt(getX()+2,getY(),true);
-        if(t.hasPiece() && t2.isLand()) moves[4][2] = JUMP;
+        if(t.hasPiece() || t.hasWall() && t2.isLand()) moves[4][2] = JUMP;
 
         t = X.getInstance().world.getAt(getX()-1,getY(),true);
         t2 = X.getInstance().world.getAt(getX()-2,getY(),true);
-        if(t.hasPiece() && t2.isLand()) moves[0][2] = JUMP;
+        if(t.hasPiece() || t.hasWall() && t2.isLand()) moves[0][2] = JUMP;
 
         t = X.getInstance().world.getAt(getX(),getY()+1,true);
         t2 = X.getInstance().world.getAt(getX(),getY()+2,true);
-        if(t.hasPiece() && t2.isLand()) moves[2][4] = JUMP;
+        if(t.hasPiece() || t.hasWall() && t2.isLand()) moves[2][4] = JUMP;
 
         t = X.getInstance().world.getAt(getX(),getY()-1,true);
         t2 = X.getInstance().world.getAt(getX(),getY()-2,true);
-        if(t.hasPiece() && t2.isLand()) moves[2][0] = JUMP;
+        if(t.hasPiece() || t.hasWall() && t2.isLand()) moves[2][0] = JUMP;
 
         return moves;
     }

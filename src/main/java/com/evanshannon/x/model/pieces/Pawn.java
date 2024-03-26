@@ -69,27 +69,27 @@ public class Pawn extends LandPiece{
     }
 
     @Override
-    public int[][] moveMap() {
+    public int[][] moveMap(boolean onMove) {
         int[][] moves = new int[3][3];
         Tile t;
 
         t = X.getInstance().world.getAt(getX()+1,getY(),true);
-        if(!t.hasPiece() && !t.isWater()) moves[2][1] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][1] = MOVE;
         t = X.getInstance().world.getAt(getX()-1,getY(),true);
-        if(!t.hasPiece() && !t.isWater()) moves[0][1] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][1] = MOVE;
         t = X.getInstance().world.getAt(getX(),getY()+1,true);
-        if(!t.hasPiece() && !t.isWater()) moves[1][2] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[1][2] = MOVE;
         t = X.getInstance().world.getAt(getX(),getY()-1,true);
-        if(!t.hasPiece() && !t.isWater()) moves[1][0] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[1][0] = MOVE;
 
         t = X.getInstance().world.getAt(getX()+1,getY()+1,true);
-        if(t.hasPiece() && !t.isWater()) moves[2][2] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][2] = ATCK;
         t = X.getInstance().world.getAt(getX()-1,getY()-1,true);
-        if(t.hasPiece() && !t.isWater()) moves[0][0] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][0] = ATCK;
         t = X.getInstance().world.getAt(getX()-1,getY()+1,true);
-        if(t.hasPiece() && !t.isWater()) moves[0][2] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][2] = ATCK;
         t = X.getInstance().world.getAt(getX()+1,getY()-1,true);
-        if(t.hasPiece() && !t.isWater()) moves[2][0] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][0] = ATCK;
 
         return moves;
     }

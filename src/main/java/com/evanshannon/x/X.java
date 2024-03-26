@@ -81,26 +81,23 @@ public class X extends SimpleApplication {
                 new Player("Blue",TextureHandler.BLUE),
                 new Player("Green",TextureHandler.GREEN),
                 new Player("Magenta",TextureHandler.MAGENTA),
-                new Player("Cyan",TextureHandler.CYAN),
-                new Player("Neutral",TextureHandler.WHITE),
-                new Player("Barbarian",TextureHandler.BLACK)
+                new Player("Cyan",TextureHandler.CYAN)
         );
 
         initializePieces();
         TileRenderer.render(rootNode,world,0,0);
     }
     private void initializePieces(){
-        int i = 0;
-        for(Player player : turnHandler.getPlayers()){
-            Tile t1 = world.getAt(0,i,true);
-            new Factory(player,t1);
-            Tile t2 = world.getAt(1,i,true);
-            Farm f = new Farm(player,t2);
-            f.upgrade();
-            f.upgrade();
-            Tile t3 = world.getAt(2,i,true);
-            new Barracks(player,t3);
-            i++;
+        Player[] players = turnHandler.getPlayers();
+        for(int i = 0; i < players.length; i++){
+            Tile t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE,true);
+            t.setPiece(new General(players[i]));
+            t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE,true);
+            new Farm(t);
+            t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE+1,true);
+            new Barracks(t);
+            t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE+1,true);
+            new Factory(t);
         }
     }
     private void initializeInputs(){
@@ -179,7 +176,11 @@ public class X extends SimpleApplication {
                     Chunk chunk = world.get(cx,cy,false);
                     Tile tile = chunk.getTile(dx,dy);
 
-                    new Wall(turnHandler.getPOV(),tile);
+                    if(tile.hasBuilding()){
+                        System.out.println(tile.getOwner().getName());
+                        return;
+                    }
+                    if(turnHandler.getPOV().onBuild()) new Wall(tile);
 
                     TileRenderer.rerender(rootNode,chunk);
                     if(dx == 0) TileRenderer.rerender(rootNode,world.get(cx-1,cy,true));

@@ -5,14 +5,20 @@ import com.evanshannon.x.model.buildings.Building;
 import com.evanshannon.x.model.buildings.Wall;
 import com.evanshannon.x.model.pieces.Piece;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
+
 public class Tile {
     private static Octave octave = new Octave();
 
     private float height;
     private Piece piece = null;
+    private Player cachedOwner = null;
     private Building building = null;
     private final int x;
     private final int y;
+    private HashSet<Piece> pieces = new HashSet<>();
 
     public boolean isWater(){
         return height < 0;
@@ -21,7 +27,7 @@ public class Tile {
         return !isWater();
     }
     public Tile(int x, int y){
-        height = octave.at(x,y);
+        height = octave.at(x,y)+5000;
         this.x = x;
         this.y = y;
     }
@@ -67,7 +73,27 @@ public class Tile {
         return X.getInstance().world.getAt(x-1,y,true);
     }
     public Player getOwner(){
-        if(building != null) return building.getOwner();
-        else return null;
+        if(pieces.size() == 0) return null;
+        HashMap<Player,Integer> m = new HashMap<>();
+        for(Piece piece : pieces){
+            if(m.containsKey(piece.getPlayer())) m.put(piece.getPlayer(),m.get(piece.getPlayer())+1);
+            else m.put(piece.getPlayer(),1);
+        }
+        int highest = 0;
+        Player hp = null;
+        for(Player player : m.keySet()){
+            if(m.get(player) > highest) hp = player;
+        }
+        if(Objects.equals(m.get(hp), m.get(cachedOwner))) return cachedOwner;
+        else{
+            cachedOwner = hp;
+            return hp;
+        }
+    }
+    public void addControl(Piece piece){
+        pieces.add(piece);
+    }
+    public void removeControl(Piece piece){
+        pieces.remove(piece);
     }
 }

@@ -7,7 +7,7 @@ import com.jme3.scene.Node;
 public class Mine extends Building{
 
     public Mine(Player player, Tile tile) {
-        super(player, tile);
+        super(tile);
     }
 
     @Override
