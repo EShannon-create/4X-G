@@ -18,7 +18,7 @@ public abstract class Building {
     public Player getOwner(){
         return tile.getOwner();
     }
-    Texture getTexture(){
+    public Texture getTexture(){
         Player owner = getOwner();
         if(owner == null) return TextureHandler.WHITE;
         else return owner.getTexture();

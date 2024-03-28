@@ -2,13 +2,115 @@ package com.evanshannon.x;
 
 import com.evanshannon.x.model.Octave;
 import com.evanshannon.x.model.Perlin;
+import com.evanshannon.x.model.Player;
+import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.pieces.General;
 import com.evanshannon.x.model.pieces.Piece;
+import com.jme3.texture.Texture;
 
 import java.awt.image.BufferedImage;
 
 public class Sandbox {
     public static void main(String[] args){
-        combinationTest();
+        ownershipTest2();
+    }
+    public static void ownershipTest2(){
+        Tile t = new Tile(0,0);
+
+        Player p1 = new Player("1", null);
+        Player p2 = new Player("2", null);
+
+        General g;
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print("1. " + t.getOwner().getName());
+
+        t.removeControl(g);
+        if(t.getOwner() == null) IO.print("2. " + "No owner");
+        else IO.print("2. " + t.getOwner().getName());
+
+        g = new General(p2);
+        t.addControl(g);
+        IO.print("3. " + t.getOwner().getName());
+
+        t.removeControl(g);
+        if(t.getOwner() == null) IO.print("4. No owner");
+        else IO.print("4. " + t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print("5. " + t.getOwner().getName());
+
+        g = new General(p2);
+        t.addControl(g);
+        IO.print("6. " + t.getOwner().getName());
+
+        General g2 = new General(p2);
+        t.addControl(g2);
+        IO.print("7. " + t.getOwner().getName());
+
+        t.removeControl(g);
+        if(t.getOwner() == null) IO.print("8. " + "No owner");
+        else IO.print("8. " + t.getOwner().getName());
+
+        t.removeControl(g2);
+        if(t.getOwner() == null) IO.print("9. " + "No owner");
+        else IO.print("9. " + t.getOwner().getName());
+    }
+    public static void ownershipTest(){
+        Tile t = new Tile(0,0);
+
+        Player p1 = new Player("1", null);
+        Player p2 = new Player("2", null);
+
+        General g;
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p2);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p2);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        for(Piece piece : t.getPieces()){
+            System.out.print(piece.getPlayer().getName()+"\t");
+        }
+        IO.line();
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        g = new General(p1);
+        t.addControl(g);
+        IO.print(t.getOwner().getName());
+
+        for(Piece piece : t.getPieces()){
+            System.out.print(piece.getPlayer().getName()+"\t");
+        }
+        IO.line();
     }
     public static void combinationTest(){
         int[][] a = {{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,0},{1,0,1,0,1},{0,1,0,1,0}};

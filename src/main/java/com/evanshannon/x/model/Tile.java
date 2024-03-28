@@ -27,7 +27,7 @@ public class Tile {
         return !isWater();
     }
     public Tile(int x, int y){
-        height = octave.at(x,y)+5000;
+        height = octave.at(x,y);
         this.x = x;
         this.y = y;
     }
@@ -74,21 +74,37 @@ public class Tile {
     }
     public Player getOwner(){
         if(pieces.size() == 0) return null;
+
         HashMap<Player,Integer> m = new HashMap<>();
         for(Piece piece : pieces){
             if(m.containsKey(piece.getPlayer())) m.put(piece.getPlayer(),m.get(piece.getPlayer())+1);
             else m.put(piece.getPlayer(),1);
         }
+        //for(Player p : m.keySet()){
+        //    System.out.print("."+p.getName() + " " + m.get(p) + "\t");
+        //}
+        //System.out.println();
         int highest = 0;
         Player hp = null;
         for(Player player : m.keySet()){
-            if(m.get(player) > highest) hp = player;
+            if(m.get(player) > highest){
+                hp = player;
+                highest = m.get(player);
+            }
         }
-        if(Objects.equals(m.get(hp), m.get(cachedOwner))) return cachedOwner;
+        //System.out.println("="+hp.getName());
+        if(cachedOwner != null && m.get(cachedOwner) != null && highest == m.get(cachedOwner)){
+            //System.out.println("Cache");
+            return cachedOwner;
+        }
         else{
+            //System.out.println("Switch");
             cachedOwner = hp;
             return hp;
         }
+    }
+    public HashSet<Piece> getPieces(){
+        return pieces;
     }
     public void addControl(Piece piece){
         pieces.add(piece);

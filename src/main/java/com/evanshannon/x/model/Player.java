@@ -11,10 +11,12 @@ public class Player {
     private final String name;
     private HashSet<Commander> moved;
     private int builds;
+    private HashSet<Piece> pieces;
 
     public Player(String name, Texture texture){
         this.name = name;
         this.texture = texture;
+        this.pieces = new HashSet<>();
         endTurn();
     }
     public String getName(){
@@ -40,5 +42,14 @@ public class Player {
     }
     public int getBuilds(){
         return builds;
+    }
+    public void registerPiece(Piece piece){
+        pieces.add(piece);
+    }
+    public HashSet<Piece> getPieces(){
+        return pieces;
+    }
+    public void unregisterPiece(Piece piece){
+        pieces.remove(piece);
     }
 }

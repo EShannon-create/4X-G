@@ -18,7 +18,6 @@ import com.jme3.texture.Texture;
 
 public class Farm extends Building{
     private static final int MAX_ROWS = 6;
-    private Node model = null;
     private int farmRows;
     public Farm(Tile tile){
         super(tile);
@@ -147,10 +146,7 @@ public class Farm extends Building{
     }
     @Override
     public Node getModel(){
-        if(model == null){
-            model = getModel(getTexture(),farmRows);
-        }
-        return model;
+        return getModel(getTexture(),farmRows);
     }
     public int getFarmRows(){
         return farmRows;

@@ -40,6 +40,7 @@ public abstract class Piece {
     public Piece(Player player){
         allPieces.add(this);
         this.player = player;
+        player.registerPiece(this);
         updatePossession();
     }
 
@@ -107,6 +108,12 @@ public abstract class Piece {
         return getMoves(true);
     }
     public int[][] getMoves(boolean onMove){
+        try{
+            X.getInstance();
+        }
+        catch(RuntimeException e){
+            return new int[][]{{0}};
+        }
         int[][] canMove = moveMap(onMove);
 
         HashSet<int[][]> moves = new HashSet<>();
@@ -207,6 +214,7 @@ public abstract class Piece {
     }
     public void onDestroy(){
         if(commander != null) commander.remove(this);
+
     }
     public boolean findCommander(){
         for(Piece commander : X.getInstance().world.getCommanders()){
@@ -239,6 +247,7 @@ public abstract class Piece {
                 final int y = j+this.y-moves.length/2;
                 final Tile t = X.getInstance().world.getAt(x,y,true);
                 t.addControl(this);
+                possessing.add(t);
             }
         }
     }

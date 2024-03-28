@@ -44,9 +44,9 @@ public class X extends SimpleApplication {
     private Piece selectedPiece = null;
     private BitmapText location;
     private BitmapText playerInfo;
-    public Player POV;
     private Node bounds = null;
     private TurnHandler turnHandler;
+    private boolean sw = false;
 
     private static final int SHADOWMAP_SIZE = 256;
 
@@ -85,19 +85,21 @@ public class X extends SimpleApplication {
         );
 
         initializePieces();
+        updatePossessions();
         TileRenderer.render(rootNode,world,0,0);
     }
     private void initializePieces(){
         Player[] players = turnHandler.getPlayers();
         for(int i = 0; i < players.length; i++){
-            Tile t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE,true);
-            t.setPiece(new General(players[i]));
+            Tile t;
             t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE,true);
             new Farm(t);
             t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE+1,true);
             new Barracks(t);
             t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE+1,true);
             new Factory(t);
+            t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE,true);
+            t.setPiece(new General(players[i]));
         }
     }
     private void initializeInputs(){
@@ -110,6 +112,10 @@ public class X extends SimpleApplication {
         inputManager.addListener(keyListener,"X");
         inputManager.addMapping("G",new KeyTrigger(KeyInput.KEY_G));
         inputManager.addListener(keyListener,"G");
+        inputManager.addMapping("T",new KeyTrigger(KeyInput.KEY_T));
+        inputManager.addListener(keyListener,"T");
+        inputManager.addMapping("R",new KeyTrigger(KeyInput.KEY_R));
+        inputManager.addListener(keyListener,"R");
     }
 
     private final ActionListener keyListener = new ActionListener() {
@@ -133,9 +139,32 @@ public class X extends SimpleApplication {
                         clearMoveSpheres();
                     }
                 }
+                case "T" -> {
+                    if(keyPressed){
+                        clearMoveSpheres();
+                        sw = true;
+                    }
+                }
+                case "R" -> {
+                    if(keyPressed){
+                        updatePossessions();
+
+                        rootNode.detachAllChildren();
+                        final int x = MathLib.roundDown(cam.getLocation().x);
+                        final int y = MathLib.roundDown(cam.getLocation().y);
+                        TileRenderer.render(rootNode,world,x,y);
+                    }
+                }
             }
         }
     };
+    private void updatePossessions(){
+        for(Player p : turnHandler.getPlayers()){
+            for(Piece piece : p.getPieces()){
+                piece.updatePossession();
+            }
+        }
+    }
 
     private final ActionListener clickListener = new ActionListener(){
         public void onAction(String name, boolean keyPressed, float tpf){
@@ -161,7 +190,6 @@ public class X extends SimpleApplication {
                     handleSelectPiece(g);
                 }
                 else{
-                    IO.print(g.getLocalTranslation().toString());
                     if(g.getName().charAt(0) != 'T') return;
 
                     int x = (int)(g.getLocalTranslation().x+g.getParent().getLocalTranslation().x);
@@ -176,11 +204,19 @@ public class X extends SimpleApplication {
                     Chunk chunk = world.get(cx,cy,false);
                     Tile tile = chunk.getTile(dx,dy);
 
-                    if(tile.hasBuilding()){
-                        System.out.println(tile.getOwner().getName());
+                    if(tile.hasBuilding() && tile.getOwner() != null){
+                        IO.print(tile.getOwner().getName());
+                        IO.print(tile.getBuilding().getTexture().getName());
+                        for(Piece piece : tile.getPieces()){
+                            System.out.print(piece.getPlayer().getName() + "\t");
+                        }
+                        IO.line();
                         return;
                     }
-                    if(turnHandler.getPOV().onBuild()) new Wall(tile);
+                    if(turnHandler.getPOV().onBuild()){
+                        tile.setPiece(new General(turnHandler.getPOV()));
+                        updatePossessions();
+                    }
 
                     TileRenderer.rerender(rootNode,chunk);
                     if(dx == 0) TileRenderer.rerender(rootNode,world.get(cx-1,cy,true));
@@ -237,7 +273,8 @@ public class X extends SimpleApplication {
         if(!p.canMove()) return;
 
         selectedPiece = p;
-        makeMoveSpheres(p);
+        if(sw) makeMoveSpheres2(p);
+        else makeMoveSpheres(p);
     }
     private void handleClickMoveSphere(Geometry g){
         Chunk oldC = selectedPiece.getChunk();
@@ -293,7 +330,31 @@ public class X extends SimpleApplication {
         selectedPiece = null;
         return true;
     }
+    private void makeMoveSpheres2(Piece piece){
+        clearMoveSpheres();
 
+        int[][] moves = piece.getMoves(false);
+        Sphere s = new Sphere(8,8,0.125f);
+        for(int i = 0; i < moves.length; i++){
+            for(int j = 0; j < moves[i].length; j++){
+                if(moves[i][j] != 0){
+                    int x = i+piece.getX()-moves.length/2;
+                    int y = j+piece.getY()-moves.length/2;
+
+                    Geometry g = new Geometry(") "+x+" "+y,s);
+                    Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+                    m.setColor("Color",ColorRGBA.fromRGBA255(200,100,50,255));
+                    g.setMaterial(m);
+
+                    g.setLocalTranslation(i-moves.length/2,1.5f,j-moves.length/2);
+                    g.setShadowMode(RenderQueue.ShadowMode.Off);
+                    moveSpheres.attachChild(g);
+                }
+            }
+        }
+        moveSpheres.setLocalTranslation(piece.getLocation());
+        rootNode.attachChild(moveSpheres);
+    }
     private void makeMoveSpheres(Piece piece){
         clearMoveSpheres();
 

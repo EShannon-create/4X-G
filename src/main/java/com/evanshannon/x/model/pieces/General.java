@@ -23,7 +23,12 @@ public class General extends LandPiece implements Commander{
 
     public General(Player player) {
         super(player);
-        X.getInstance().world.registerCommander(this);
+        try {
+            X.getInstance().world.registerCommander(this);
+        }
+        catch(RuntimeException e){
+
+        }
         updateBounds();
     }
 
@@ -150,6 +155,7 @@ public class General extends LandPiece implements Commander{
 
     @Override
     public int[][] moveMap(boolean onMove) {
+
         int[][] moves = new int[3][3];
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++){
