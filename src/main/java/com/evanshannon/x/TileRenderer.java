@@ -17,7 +17,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 
 public class TileRenderer {
-    public static final int RENDER_DISTANCE = 7;
+    public static final int RENDER_DISTANCE = 8;
     public static void clear(Node rootnode, World world, int x, int y){
         for(int i = x-(RENDER_DISTANCE+1); i <= x+(RENDER_DISTANCE+1); i++){
             for(int j = y-(RENDER_DISTANCE+1); j <= y+(RENDER_DISTANCE+1); j++){

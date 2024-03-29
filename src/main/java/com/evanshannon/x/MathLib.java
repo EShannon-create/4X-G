@@ -43,4 +43,12 @@ public class MathLib {
         if(value < 0f) return (int)value-1;
         else return (int)value;
     }
+    public static void shuffle(Object[] list){
+        for(int i = 0; i < list.length; i++){
+            int j = roll(0,list.length);
+            Object temp = list[j];
+            list[j] = list[i];
+            list[i] = temp;
+        }
+    }
 }

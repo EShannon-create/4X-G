@@ -9,6 +9,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -79,6 +80,7 @@ public class Barracks extends Building{
 
         node.setLocalScale(1f/4f);
         node.setLocalTranslation(0.5f,1f/6f,-0.5f);
+        node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
         Node n = new Node();
         n.attachChild(node);

@@ -49,6 +49,9 @@ public class X extends SimpleApplication {
     private boolean sw = false;
 
     private static final int SHADOWMAP_SIZE = 256;
+    private static final float MIN_CAM_HEIGHT = 1.5f;
+    private static final float MAX_CAM_HEIGHT = 50f;
+    private static final int SPAWN = 75;
 
     public static void main(String[] args) {
         X app = new X();
@@ -67,6 +70,7 @@ public class X extends SimpleApplication {
     public void simpleInitApp() {
         TextureHandler.initialize();
         flyCam.setMoveSpeed(15);
+        cam.setLocation(new Vector3f(0f,3f,0f));
         oldloc = new int[]{0,0};
 
         horizon = TileRenderer.getHorizon();
@@ -86,20 +90,15 @@ public class X extends SimpleApplication {
 
         initializePieces();
         updatePossessions();
-        TileRenderer.render(rootNode,world,0,0);
+        cam.setLocation(turnHandler.getPOV().getLocation());
+        final int x = MathLib.divide((int)cam.getLocation().x,CHUNK_SIZE);
+        final int y = MathLib.divide((int)cam.getLocation().z,CHUNK_SIZE);
+        TileRenderer.render(rootNode,world,x,y);
     }
     private void initializePieces(){
         Player[] players = turnHandler.getPlayers();
-        for(int i = 0; i < players.length; i++){
-            Tile t;
-            t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE,true);
-            new Farm(t);
-            t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE+1,true);
-            new Barracks(t);
-            t = world.getAt(i*CHUNK_SIZE+1,i*CHUNK_SIZE+1,true);
-            new Factory(t);
-            t = world.getAt(i*CHUNK_SIZE,i*CHUNK_SIZE,true);
-            t.setPiece(new General(players[i]));
+        for(Player player : players){
+            setSpawn(player);
         }
     }
     private void initializeInputs(){
@@ -133,11 +132,7 @@ public class X extends SimpleApplication {
                     }
                 }
                 case "G" -> {
-                    if(keyPressed){
-                        turnHandler.endTurn();
-                        selectedPiece = null;
-                        clearMoveSpheres();
-                    }
+                    if(keyPressed) endTurn();
                 }
                 case "T" -> {
                     if(keyPressed){
@@ -213,6 +208,9 @@ public class X extends SimpleApplication {
                         IO.line();
                         return;
                     }
+
+                    if(tile.hasBuilding() || tile.hasPiece()) return;
+
                     if(turnHandler.getPOV().onBuild()){
                         tile.setPiece(new General(turnHandler.getPOV()));
                         updatePossessions();
@@ -277,8 +275,6 @@ public class X extends SimpleApplication {
         else makeMoveSpheres(p);
     }
     private void handleClickMoveSphere(Geometry g){
-        Chunk oldC = selectedPiece.getChunk();
-
         String[] split = g.getName().split(" ");
         int x = Integer.parseInt(split[1]);
         int y = Integer.parseInt(split[2]);//Convenient albeit silly
@@ -289,9 +285,19 @@ public class X extends SimpleApplication {
 
         if((moves[i][j] & 8) == 8) selectedPiece.jump(x,y);
         else selectedPiece.move(x,y);
-        TileRenderer.rerender(rootNode, oldC);
-        Chunk newC = selectedPiece.getChunk();
-        TileRenderer.rerender(rootNode, newC);
+
+        final int px = MathLib.divide(selectedPiece.getX(),CHUNK_SIZE);
+        final int py = MathLib.divide(selectedPiece.getY(),CHUNK_SIZE);
+        System.out.println(px+" "+py);
+
+        for(int cx = px-1; cx <= px+1; cx++){
+            for(int cy = py-1; cy <= py+1; cy++){
+                System.out.print(cx+" "+cy+"\t");
+
+                final Chunk chunk = world.get(cx,cy,true);
+                TileRenderer.rerender(rootNode,chunk);
+            }
+        }
 
         clearMoveSpheres();
         selectedPiece = null;
@@ -427,13 +433,38 @@ public class X extends SimpleApplication {
         location.setText(cam.getLocation().toString());
         location.setLocalTranslation(settings.getWidth()/2f-location.getLineWidth()/2f,settings.getHeight(),0);
 
-        playerInfo.setText("Player: "+turnHandler.getPOV().getName()+"\nBuilds: "+turnHandler.getPOV().getBuilds()+"\nTurn: " + turnHandler.getTurn());
+        playerInfo.setText("Player: "+turnHandler.getPOV().getName()+"\nBuilds: "+turnHandler.getPOV().getBuilds()+"\nTurn: " + turnHandler.getTurn()+"\n\nFood: " + turnHandler.getPOV().getFood() + "\nSoldiers: "+turnHandler.getPOV().countPieces());
         playerInfo.setLocalTranslation(settings.getWidth()-playerInfo.getLineWidth()*1.1f,settings.getHeight(),0);
+    }
+    public void setSpawn(Player player){
+        boolean found = false;
+        Tile t = null;
+        int x = 0;
+        int y = 0;
+        while(!found){
+            x = MathLib.roll(-SPAWN,SPAWN);
+            y = MathLib.roll(-SPAWN,SPAWN);
+
+            t = world.getAt(x,y,true);
+            found = t.isLand() && t.getNorth().isLand() && t.getSouth().isLand() && t.getEast().isLand() && t.getWest().isLand();
+        }
+        t.setPiece(new General(player));
+        Tile[] tiles = {t.getNorth(),t.getSouth(),t.getEast(),t.getWest()};
+        MathLib.shuffle(tiles);
+        Farm f = new Farm(tiles[0]);
+        f.upgrade();
+        f.upgrade();
+        f.upgrade();
+        new Factory(tiles[1]);
+        new Barracks(tiles[2]);
+        tiles[3].setPiece(new Pawn(player));
+        player.setLocation(new Vector3f(x,3f,y+10f));
     }
 
     @Override
     public void simpleUpdate(float tpf) {
         checkChunks();
+        checkCamera();
         updateText();
     }
     private void checkChunks(){
@@ -461,5 +492,19 @@ public class X extends SimpleApplication {
     public static X getInstance(){
         if(instance == null) throw new RuntimeException("X::getInstance() got called early!");
         return instance;
+    }
+    public void checkCamera(){
+        if(cam.getLocation().y < MIN_CAM_HEIGHT) cam.setLocation(new Vector3f(cam.getLocation().x,MIN_CAM_HEIGHT,cam.getLocation().z));
+        if(cam.getLocation().y > MAX_CAM_HEIGHT) cam.setLocation(new Vector3f(cam.getLocation().x,MAX_CAM_HEIGHT,cam.getLocation().z));
+    }
+    public void endTurn(){
+        turnHandler.getPOV().setLocation(cam.getLocation());
+        turnHandler.endTurn();
+        selectedPiece = null;
+        clearMoveSpheres();
+        cam.setLocation(turnHandler.getPOV().getLocation());
+        final int x = MathLib.divide((int)cam.getLocation().x,CHUNK_SIZE);
+        final int y = MathLib.divide((int)cam.getLocation().z,CHUNK_SIZE);
+        TileRenderer.render(rootNode,world,x,y);
     }
 }

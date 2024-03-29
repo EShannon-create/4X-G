@@ -214,7 +214,7 @@ public abstract class Piece {
     }
     public void onDestroy(){
         if(commander != null) commander.remove(this);
-
+        player.unregisterPiece(this);
     }
     public boolean findCommander(){
         for(Piece commander : X.getInstance().world.getCommanders()){
