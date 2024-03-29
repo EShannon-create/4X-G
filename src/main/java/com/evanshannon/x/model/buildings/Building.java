@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 public abstract class Building {
     private static final HashSet<Building> ALL_BUILDINGS = new HashSet<>();
+    private static final int BUILDS_PER_FACTORY = 3;
     final Tile tile;
 
     protected Building(Tile tile) {
@@ -41,5 +42,14 @@ public abstract class Building {
             }
         }
         return food;
+    }
+    public static int getBuilds(Player player){
+        int builds = 0;
+        for(Building building : ALL_BUILDINGS){
+            if(building instanceof Factory && building.getOwner() == player){
+                builds += BUILDS_PER_FACTORY;
+            }
+        }
+        return builds;
     }
 }

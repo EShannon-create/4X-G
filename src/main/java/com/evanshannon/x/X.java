@@ -14,6 +14,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -47,11 +48,16 @@ public class X extends SimpleApplication {
     private Node bounds = null;
     private TurnHandler turnHandler;
     private boolean sw = false;
+    private BitmapText buildGUI;
+    private int selectionIndex = 0;
+    private int selectionX = 0;
+    private int selectionY = 0;
 
     private static final int SHADOWMAP_SIZE = 256;
     private static final float MIN_CAM_HEIGHT = 1.5f;
     private static final float MAX_CAM_HEIGHT = 50f;
     private static final int SPAWN = 75;
+    private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
 
     public static void main(String[] args) {
         X app = new X();
@@ -94,6 +100,10 @@ public class X extends SimpleApplication {
         final int x = MathLib.divide((int)cam.getLocation().x,CHUNK_SIZE);
         final int y = MathLib.divide((int)cam.getLocation().z,CHUNK_SIZE);
         TileRenderer.render(rootNode,world,x,y);
+
+        for(Player player : turnHandler.getPlayers()){
+            player.endTurn();//Updates & initializes stuff, essentially ending Turn 0
+        }
     }
     private void initializePieces(){
         Player[] players = turnHandler.getPlayers();
@@ -115,6 +125,34 @@ public class X extends SimpleApplication {
         inputManager.addListener(keyListener,"T");
         inputManager.addMapping("R",new KeyTrigger(KeyInput.KEY_R));
         inputManager.addListener(keyListener,"R");
+
+        inputManager.addMapping("ScrollUp",new MouseAxisTrigger(MouseInput.AXIS_WHEEL,false));
+        inputManager.addListener(mouseListener,"ScrollUp");
+        inputManager.addMapping("ScrollDown",new MouseAxisTrigger(MouseInput.AXIS_WHEEL,true));
+        inputManager.addListener(mouseListener,"ScrollDown");
+    }
+    private final ActionListener mouseListener = new ActionListener() {
+        @Override
+        public void onAction(String name, boolean isPressed, float v) {
+            if(isPressed){
+                switch(name){
+                    case "ScrollUp" -> scrollBlockUp();
+                    case "ScrollDown" -> scrollBlockDown();
+                }
+                buildGUI(selectionIndex);
+
+                //Shitty hack I should not rely on
+                cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), cam.getFrustumNear(), cam.getFrustumFar());
+            }
+        }
+    };
+    private void scrollBlockUp(){
+        selectionIndex--;
+        if(selectionIndex < 0) selectionIndex = texts.length-1;
+    }
+    private void scrollBlockDown(){
+        selectionIndex++;
+        if(selectionIndex >= texts.length) selectionIndex = 0;
     }
 
     private final ActionListener keyListener = new ActionListener() {
@@ -187,17 +225,10 @@ public class X extends SimpleApplication {
                 else{
                     if(g.getName().charAt(0) != 'T') return;
 
-                    int x = (int)(g.getLocalTranslation().x+g.getParent().getLocalTranslation().x);
-                    int y = (int)(g.getLocalTranslation().z+g.getParent().getLocalTranslation().z);
-
-                    int cx = MathLib.divide(x,CHUNK_SIZE);
-                    int cy = MathLib.divide(y,CHUNK_SIZE);
-
-                    int dx = MathLib.mod(x,CHUNK_SIZE);
-                    int dy = MathLib.mod(y,CHUNK_SIZE);
-
-                    Chunk chunk = world.get(cx,cy,false);
-                    Tile tile = chunk.getTile(dx,dy);
+                    selectionIndex = 0;
+                    selectionX = (int)(g.getLocalTranslation().x+g.getParent().getLocalTranslation().x);
+                    selectionY = (int)(g.getLocalTranslation().z+g.getParent().getLocalTranslation().z);
+                    Tile tile = world.getAt(selectionX,selectionY,false);
 
                     if(tile.hasBuilding() && tile.getOwner() != null){
                         IO.print(tile.getOwner().getName());
@@ -211,17 +242,16 @@ public class X extends SimpleApplication {
 
                     if(tile.hasBuilding() || tile.hasPiece()) return;
 
-                    if(turnHandler.getPOV().onBuild()){
-                        tile.setPiece(new General(turnHandler.getPOV()));
-                        updatePossessions();
+                    if(turnHandler.getPOV().hasBuild() && tile.getOwner() == turnHandler.getPOV()){
+                        buildGUI(0);
                     }
-
-                    TileRenderer.rerender(rootNode,chunk);
-                    if(dx == 0) TileRenderer.rerender(rootNode,world.get(cx-1,cy,true));
-                    if(dx == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx+1,cy,true));
-                    if(dy == 0) TileRenderer.rerender(rootNode,world.get(cx,cy-1,true));
-                    if(dy == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx,cy+1,true));
                     clearMoveSpheres();
+                }
+            }
+            else{
+                if(name.equals("Right Click")){
+                    clearBuildGUI();
+                    handleSelection();
                 }
             }
         }
@@ -307,6 +337,11 @@ public class X extends SimpleApplication {
         if(p == null){
             clearMoveSpheres();
             return false;
+        }
+        if(p == selectedPiece){
+            selectedPiece = null;
+            clearMoveSpheres();
+            return true;
         }
         if(p.getPlayer() == selectedPiece.getPlayer()){
             selectedPiece = p;
@@ -428,6 +463,10 @@ public class X extends SimpleApplication {
         playerInfo.setSize(guiFont.getCharSet().getRenderedSize());
         playerInfo.setColor(ColorRGBA.White);
         guiNode.attachChild(playerInfo);
+
+        buildGUI = new BitmapText(guiFont,false);
+        buildGUI.setSize(guiFont.getCharSet().getRenderedSize());
+        buildGUI.setColor(ColorRGBA.White);
     }
     private void updateText(){
         location.setText(cam.getLocation().toString());
@@ -435,6 +474,22 @@ public class X extends SimpleApplication {
 
         playerInfo.setText("Player: "+turnHandler.getPOV().getName()+"\nBuilds: "+turnHandler.getPOV().getBuilds()+"\nTurn: " + turnHandler.getTurn()+"\n\nFood: " + turnHandler.getPOV().getFood() + "\nSoldiers: "+turnHandler.getPOV().countPieces());
         playerInfo.setLocalTranslation(settings.getWidth()-playerInfo.getLineWidth()*1.1f,settings.getHeight(),0);
+    }
+
+    public void buildGUI(final int index){
+        StringBuilder toUse = new StringBuilder(new String());
+        for(int i = 0; i < texts.length; i++){
+            if(i == index % texts.length) toUse.append(">");
+            else toUse.append(" ");
+            toUse.append(texts[i]).append("\n");
+        }
+        buildGUI.setText(toUse.toString());
+        buildGUI.setLocalTranslation(settings.getWidth()*0.75f-buildGUI.getLineWidth()/2f,settings.getHeight()*0.75f,0);
+
+        if(!guiNode.hasChild(buildGUI)) guiNode.attachChild(buildGUI);
+    }
+    public void clearBuildGUI(){
+        guiNode.detachChild(buildGUI);
     }
     public void setSpawn(Player player){
         boolean found = false;
@@ -498,7 +553,7 @@ public class X extends SimpleApplication {
         if(cam.getLocation().y > MAX_CAM_HEIGHT) cam.setLocation(new Vector3f(cam.getLocation().x,MAX_CAM_HEIGHT,cam.getLocation().z));
     }
     public void endTurn(){
-        turnHandler.getPOV().setLocation(cam.getLocation());
+        turnHandler.getPOV().setLocation(cam.getLocation().clone());
         turnHandler.endTurn();
         selectedPiece = null;
         clearMoveSpheres();
@@ -506,5 +561,41 @@ public class X extends SimpleApplication {
         final int x = MathLib.divide((int)cam.getLocation().x,CHUNK_SIZE);
         final int y = MathLib.divide((int)cam.getLocation().z,CHUNK_SIZE);
         TileRenderer.render(rootNode,world,x,y);
+    }
+    public void handleSelection(){
+        Tile t = world.getAt(selectionX,selectionY,true);
+
+        switch(selectionIndex){
+            case 0 -> {return;}
+            case 1 -> new Farm(t);
+            case 2 -> new Barracks(t);
+            case 3 -> new Factory(t);
+            case 4 -> new Wall(t);
+            case 5 -> t.setPiece(new General(turnHandler.getPOV()));
+            case 6 -> t.setPiece(new Lieutenant(turnHandler.getPOV()));
+            case 7 -> t.setPiece(new Rook(turnHandler.getPOV()));
+            case 8 -> t.setPiece(new Bishop(turnHandler.getPOV()));
+            case 9 -> t.setPiece(new Knight(turnHandler.getPOV()));
+            case 10 -> t.setPiece(new Cannon(turnHandler.getPOV()));
+            case 11 -> t.setPiece(new Pawn(turnHandler.getPOV()));
+        }
+
+
+        int cx = MathLib.divide(selectionX,CHUNK_SIZE);
+        int cy = MathLib.divide(selectionY,CHUNK_SIZE);
+
+        int dx = MathLib.mod(selectionX,CHUNK_SIZE);
+        int dy = MathLib.mod(selectionY,CHUNK_SIZE);
+
+        Chunk chunk = world.get(cx,cy,false);
+
+        TileRenderer.rerender(rootNode,chunk);
+        if(dx == 0) TileRenderer.rerender(rootNode,world.get(cx-1,cy,true));
+        if(dx == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx+1,cy,true));
+        if(dy == 0) TileRenderer.rerender(rootNode,world.get(cx,cy-1,true));
+        if(dy == CHUNK_SIZE-1) TileRenderer.rerender(rootNode,world.get(cx,cy+1,true));
+
+        turnHandler.getPOV().onBuild();
+        if(t.hasPiece()) t.getPiece().updatePossession();
     }
 }

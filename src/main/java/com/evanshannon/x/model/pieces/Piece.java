@@ -234,10 +234,7 @@ public abstract class Piece {
         System.out.println("No commander!");
     }
     public void updatePossession(){
-        for(Tile i : possessing){
-            i.removeControl(this);
-        }
-        possessing = new HashSet<>();
+        clearPossession();
         int[][] moves = getMoves(false);
         for(int i = 0; i < moves.length; i++){
             for(int j = 0; j < moves[i].length; j++){
@@ -250,5 +247,15 @@ public abstract class Piece {
                 possessing.add(t);
             }
         }
+    }
+    public void clearPossession(){
+        for(Tile i : possessing){
+            i.removeControl(this);
+        }
+        possessing = new HashSet<>();
+    }
+    public void kill(){
+        X.getInstance().world.getAt(x,y,false).clearPiece();
+        onDestroy();
     }
 }

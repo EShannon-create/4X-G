@@ -1,5 +1,6 @@
 package com.evanshannon.x.model;
 
+import com.evanshannon.x.MathLib;
 import com.evanshannon.x.model.buildings.Building;
 import com.evanshannon.x.model.pieces.Commander;
 import com.evanshannon.x.model.pieces.Piece;
@@ -13,14 +14,13 @@ public class Player {
     private final String name;
     private HashSet<Commander> moved;
     private int builds;
-    private HashSet<Piece> pieces;
+    private final HashSet<Piece> pieces;
     private Vector3f location;
 
     public Player(String name, Texture texture){
         this.name = name;
         this.texture = texture;
         this.pieces = new HashSet<>();
-        endTurn();
     }
     public String getName(){
         return name;
@@ -36,12 +36,16 @@ public class Player {
     }
     public void endTurn(){
         moved = new HashSet<>();
-        builds = 2;
+        builds = findBuilds();
+        checkPieceFeeding();
     }
     public boolean onBuild(){
         if(builds <= 0) return false;
         builds--;
         return true;
+    }
+    private int findBuilds(){
+        return Building.getBuilds(this);
     }
     public int getBuilds(){
         return builds;
@@ -73,11 +77,17 @@ public class Player {
     }
     public void checkPieceFeeding(){
         int pieces = countPieces();
-        int food = getFood();
+        final int food = getFood();
         //caching the above because those operations can be expensive!
 
         while(food < pieces){
-            
+            final Piece toRemove = (Piece) this.pieces.toArray()[MathLib.roll(0,this.pieces.size())];
+            this.pieces.remove(toRemove);
+            toRemove.kill();
+            pieces--;
         }
+    }
+    public boolean hasBuild(){
+        return builds > 0;
     }
 }
