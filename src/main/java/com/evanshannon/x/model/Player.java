@@ -19,11 +19,13 @@ public class Player {
     private final HashSet<Piece> pieces;
     private Vector3f location;
     private final ArrayList<Flag> flags = new ArrayList<>();
+    private int flagIndex;
 
     public Player(String name, Texture texture){
         this.name = name;
         this.texture = texture;
         this.pieces = new HashSet<>();
+        flagIndex = 0;
     }
     public String getName(){
         return name;
@@ -103,6 +105,10 @@ public class Player {
         setLocation(flag.getLocation());
     }
     public Flag randomFlag(){
-        return flags.get(MathLib.roll(0,flags.size()-1));
+        return flags.size() < 2 ? flags.get(0) : flags.get(MathLib.roll(0,flags.size()-1));
+    }
+    public Flag nextFlag(){
+        flagIndex++;
+        return flags.get(flagIndex);
     }
 }

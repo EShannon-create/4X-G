@@ -25,6 +25,7 @@ public class Flag extends Building{
     public Flag(Tile tile, Player player){
         this(tile);
         this.player = player;
+        player.registerFlag(this);
     }
 
     public static Node getModel(Texture texture){
@@ -104,5 +105,10 @@ public class Flag extends Building{
     public Vector3f getLocation(){
         int[] loc = tile.getLocation();
         return new Vector3f(loc[0],10f,loc[1]);
+    }
+
+    @Override
+    public Player getOwner() {
+        return player;
     }
 }

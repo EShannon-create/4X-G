@@ -57,7 +57,7 @@ public class X extends SimpleApplication {
     private static final float MIN_CAM_HEIGHT = 1.5f;
     private static final float MAX_CAM_HEIGHT = 50f;
     private static final int SPAWN = 75;
-    private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
+    private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","Flag","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
 
     public static void main(String[] args) {
         X app = new X();
@@ -125,6 +125,8 @@ public class X extends SimpleApplication {
         inputManager.addListener(keyListener,"T");
         inputManager.addMapping("R",new KeyTrigger(KeyInput.KEY_R));
         inputManager.addListener(keyListener,"R");
+        inputManager.addMapping("P",new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addListener(keyListener,"P");
 
         inputManager.addMapping("ScrollUp",new MouseAxisTrigger(MouseInput.AXIS_WHEEL,false));
         inputManager.addListener(mouseListener,"ScrollUp");
@@ -186,6 +188,11 @@ public class X extends SimpleApplication {
                         final int x = MathLib.roundDown(cam.getLocation().x);
                         final int y = MathLib.roundDown(cam.getLocation().y);
                         TileRenderer.render(rootNode,world,x,y);
+                    }
+                }
+                case "P" -> {
+                    if(keyPressed){
+                        teleportToNextFlag();
                     }
                 }
             }
@@ -564,6 +571,10 @@ public class X extends SimpleApplication {
     }
     public void teleportToRandomFlag(){
         turnHandler.getPOV().teleportToFlag(turnHandler.getPOV().randomFlag());
+        cam.setLocation(turnHandler.getPOV().getLocation());
+    }
+    public void teleportToNextFlag(){
+        turnHandler.getPOV().teleportToFlag(turnHandler.getPOV().nextFlag());
         cam.setLocation(turnHandler.getPOV().getLocation());
     }
     public void handleSelection(){
