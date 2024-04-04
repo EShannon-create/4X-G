@@ -112,4 +112,7 @@ public class Tile {
     public void removeControl(Piece piece){
         pieces.remove(piece);
     }
+    public int[] getLocation(){
+        return new int[]{x,y};
+    }
 }

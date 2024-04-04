@@ -2,11 +2,13 @@ package com.evanshannon.x.model;
 
 import com.evanshannon.x.MathLib;
 import com.evanshannon.x.model.buildings.Building;
+import com.evanshannon.x.model.buildings.Flag;
 import com.evanshannon.x.model.pieces.Commander;
 import com.evanshannon.x.model.pieces.Piece;
 import com.jme3.math.Vector3f;
 import com.jme3.texture.Texture;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Player {
@@ -16,6 +18,7 @@ public class Player {
     private int builds;
     private final HashSet<Piece> pieces;
     private Vector3f location;
+    private final ArrayList<Flag> flags = new ArrayList<>();
 
     public Player(String name, Texture texture){
         this.name = name;
@@ -89,5 +92,17 @@ public class Player {
     }
     public boolean hasBuild(){
         return builds > 0;
+    }
+    public void registerFlag(Flag flag){
+        this.flags.add(flag);
+    }
+    public Flag getFlag(int i){
+        return flags.get(i%flags.size());
+    }
+    public void teleportToFlag(Flag flag){
+        setLocation(flag.getLocation());
+    }
+    public Flag randomFlag(){
+        return flags.get(MathLib.roll(0,flags.size()-1));
     }
 }

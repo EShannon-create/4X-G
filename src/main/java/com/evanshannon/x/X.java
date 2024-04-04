@@ -562,6 +562,10 @@ public class X extends SimpleApplication {
         final int y = MathLib.divide((int)cam.getLocation().z,CHUNK_SIZE);
         TileRenderer.render(rootNode,world,x,y);
     }
+    public void teleportToRandomFlag(){
+        turnHandler.getPOV().teleportToFlag(turnHandler.getPOV().randomFlag());
+        cam.setLocation(turnHandler.getPOV().getLocation());
+    }
     public void handleSelection(){
         Tile t = world.getAt(selectionX,selectionY,true);
 
@@ -571,13 +575,14 @@ public class X extends SimpleApplication {
             case 2 -> new Barracks(t);
             case 3 -> new Factory(t);
             case 4 -> new Wall(t);
-            case 5 -> t.setPiece(new General(turnHandler.getPOV()));
-            case 6 -> t.setPiece(new Lieutenant(turnHandler.getPOV()));
-            case 7 -> t.setPiece(new Rook(turnHandler.getPOV()));
-            case 8 -> t.setPiece(new Bishop(turnHandler.getPOV()));
-            case 9 -> t.setPiece(new Knight(turnHandler.getPOV()));
-            case 10 -> t.setPiece(new Cannon(turnHandler.getPOV()));
-            case 11 -> t.setPiece(new Pawn(turnHandler.getPOV()));
+            case 5 -> new Flag(t,turnHandler.getPOV());
+            case 6 -> t.setPiece(new General(turnHandler.getPOV()));
+            case 7 -> t.setPiece(new Lieutenant(turnHandler.getPOV()));
+            case 8 -> t.setPiece(new Rook(turnHandler.getPOV()));
+            case 9 -> t.setPiece(new Bishop(turnHandler.getPOV()));
+            case 10 -> t.setPiece(new Knight(turnHandler.getPOV()));
+            case 11 -> t.setPiece(new Cannon(turnHandler.getPOV()));
+            case 12 -> t.setPiece(new Pawn(turnHandler.getPOV()));
         }
 
 

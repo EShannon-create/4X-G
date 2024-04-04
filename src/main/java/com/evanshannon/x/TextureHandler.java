@@ -21,8 +21,9 @@ public class TextureHandler {
     public static Texture BLACK = assetManager.loadTexture("Textures/black.png");
     public static Texture FARM = assetManager.loadTexture("Textures/farm.png");
     public static Texture GLASS = assetManager.loadTexture("Textures/glass.png");
+    public static Texture WOOD = assetManager.loadTexture("Textures/log.png");
     private static final Texture[] TEXTURES  = {GRASS_LIGHT,GRASS_DARK,WATER_LIGHT,WATER_DARK};
-    private static final Texture[] COLORS = {RED,YELLOW,GREEN,CYAN,BLUE,MAGENTA,WHITE,BLACK};
+    private static final Texture[] COLORS = {RED,YELLOW,GREEN,CYAN,BLUE,MAGENTA,WHITE,BLACK,WOOD,FARM,GLASS};
 
     public static void initialize(){
         for(Texture t : TEXTURES) fix(t);
