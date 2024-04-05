@@ -144,7 +144,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2+i][moves.length/2+i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()-i;
@@ -154,7 +157,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2-i][moves.length/2-i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()+i;
@@ -164,7 +170,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2+i][moves.length/2-i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()-i;
@@ -174,7 +183,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2-i][moves.length/2+i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX();
@@ -184,7 +196,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2+i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX();
@@ -194,7 +209,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2-i] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()+i;
@@ -204,7 +222,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2+i][moves.length/2] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
         for(int i = 1; i < moves.length/2; i++){
             final int x = getX()-i;
@@ -214,7 +235,10 @@ public class Lieutenant extends LandPiece{
             if(t.hasWall()) break;
             if(t.hasBuilding() && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2-i][moves.length/2] = GOTO;
-            if(t.hasPiece()) break;
+            if(t.hasPiece()) {
+                if(onMove) break;
+                else moves[moves.length/2+i][moves.length/2+i] = CHCK;
+            }
         }
 
         return moves;

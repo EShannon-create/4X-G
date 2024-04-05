@@ -80,6 +80,9 @@ public class Player {
     public int getFood(){
         return Building.getFood(this);
     }
+    public int getFoodSurplus(){
+        return getFood()-countPieces();
+    }
     public void checkPieceFeeding(){
         int pieces = countPieces();
         final int food = getFood();
@@ -110,5 +113,21 @@ public class Player {
     public Flag nextFlag(){
         flagIndex++;
         return flags.get(flagIndex);
+    }
+    public Piece getChecks(){
+        for(Piece p : pieces){
+            if(!(p instanceof Commander c)) continue;
+            if(!c.isChecked()) continue;
+            if(p.hasAnyMove()) return p;
+
+            p.kill();
+            updateCommanderlessPieces();
+        }
+        return null;
+    }
+    public void updateCommanderlessPieces(){
+        for(Piece p : pieces){
+            if(p.getCommander() == null) p.findCommander();
+        }
     }
 }

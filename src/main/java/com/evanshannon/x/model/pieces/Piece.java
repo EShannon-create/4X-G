@@ -21,6 +21,7 @@ public abstract class Piece {
     public static final int GOTO = MOVE+ ATCK;
     public static final int FIRE = 4;
     public static final int JUMP = 8;
+    public static final int CHCK = 16;
 
     public enum Direction{NORTH,SOUTH,EAST,WEST}
 
@@ -141,6 +142,15 @@ public abstract class Piece {
 
         return finalMoves;
     }
+    public boolean hasAnyMove(){
+        int[][] moves = getMoves();
+        for(int i = 0; i < moves.length; i++){
+            for(int j = 0; j < moves.length; j++){
+                if(moves[i][j] != 0) return true;
+            }
+        }
+        return false;
+    }
 
     public static int[][] combineMoveSets(int[][] a, int[][] b){
         if(a.length == 0) throw new IllegalArgumentException("Arrays may not be empty!");
@@ -215,6 +225,12 @@ public abstract class Piece {
     public void onDestroy(){
         if(commander != null) commander.remove(this);
         player.unregisterPiece(this);
+        if(this instanceof Commander c){
+            Piece[] connected = c.getConnected();
+            for(Piece piece : connected){
+                piece.removeCommander();
+            }
+        }
     }
     public boolean findCommander(){
         for(Piece commander : X.getInstance().world.getCommanders()){
@@ -231,7 +247,7 @@ public abstract class Piece {
         return commander;
     }
     void noCommander(){
-        System.out.println("No commander!");
+        kill();
     }
     public void updatePossession(){
         clearPossession();
@@ -243,6 +259,7 @@ public abstract class Piece {
                 final int x = i+this.x-moves.length/2;
                 final int y = j+this.y-moves.length/2;
                 final Tile t = X.getInstance().world.getAt(x,y,true);
+                if(moves[i][j] == CHCK && t.hasBuilding()) continue;
                 t.addControl(this);
                 possessing.add(t);
             }
@@ -257,5 +274,8 @@ public abstract class Piece {
     public void kill(){
         X.getInstance().world.getAt(x,y,false).clearPiece();
         onDestroy();
+    }
+    public Tile getTile(){
+        return X.getInstance().world.getAt(x,y,true);
     }
 }

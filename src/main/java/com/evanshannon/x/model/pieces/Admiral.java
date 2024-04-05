@@ -53,4 +53,9 @@ public class Admiral extends SeaPiece implements Commander{
     public void updateBounds() {
 
     }
+
+    @Override
+    public boolean isChecked() {
+        return false;
+    }
 }

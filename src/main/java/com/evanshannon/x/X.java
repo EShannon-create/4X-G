@@ -237,13 +237,11 @@ public class X extends SimpleApplication {
                     selectionY = (int)(g.getLocalTranslation().z+g.getParent().getLocalTranslation().z);
                     Tile tile = world.getAt(selectionX,selectionY,false);
 
-                    if(tile.hasBuilding() && tile.getOwner() != null){
-                        IO.print(tile.getOwner().getName());
-                        IO.print(tile.getBuilding().getTexture().getName());
-                        for(Piece piece : tile.getPieces()){
-                            System.out.print(piece.getPlayer().getName() + "\t");
-                        }
-                        IO.line();
+                    if(tile.hasBuilding() && tile.getBuilding() instanceof Farm farm && farm.canUpgrade() && turnHandler.getPOV().onBuild()){
+                        farm.upgrade();
+                        int[] l = tile.getLocation();
+                        Chunk chunk = world.get(MathLib.divide(l[0],CHUNK_SIZE),MathLib.divide(l[1],CHUNK_SIZE),false);
+                        TileRenderer.rerender(rootNode,chunk);
                         return;
                     }
 
@@ -560,6 +558,13 @@ public class X extends SimpleApplication {
         if(cam.getLocation().y > MAX_CAM_HEIGHT) cam.setLocation(new Vector3f(cam.getLocation().x,MAX_CAM_HEIGHT,cam.getLocation().z));
     }
     public void endTurn(){
+        Piece p = turnHandler.getPOV().getChecks();
+        if(p != null){
+            turnHandler.getPOV().setLocation(p.getLocation());
+            cam.setLocation(turnHandler.getPOV().getLocation());
+            return;
+        }
+
         turnHandler.getPOV().setLocation(cam.getLocation().clone());
         turnHandler.endTurn();
         selectedPiece = null;
@@ -587,13 +592,13 @@ public class X extends SimpleApplication {
             case 3 -> new Factory(t);
             case 4 -> new Wall(t);
             case 5 -> new Flag(t,turnHandler.getPOV());
-            case 6 -> t.setPiece(new General(turnHandler.getPOV()));
-            case 7 -> t.setPiece(new Lieutenant(turnHandler.getPOV()));
-            case 8 -> t.setPiece(new Rook(turnHandler.getPOV()));
-            case 9 -> t.setPiece(new Bishop(turnHandler.getPOV()));
-            case 10 -> t.setPiece(new Knight(turnHandler.getPOV()));
-            case 11 -> t.setPiece(new Cannon(turnHandler.getPOV()));
-            case 12 -> t.setPiece(new Pawn(turnHandler.getPOV()));
+            case 6 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new General(turnHandler.getPOV()));}
+            case 7 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Lieutenant(turnHandler.getPOV()));}
+            case 8 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Rook(turnHandler.getPOV()));}
+            case 9 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Bishop(turnHandler.getPOV()));}
+            case 10 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Knight(turnHandler.getPOV()));}
+            case 11 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Cannon(turnHandler.getPOV()));}
+            case 12 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Pawn(turnHandler.getPOV()));}
         }
 
 

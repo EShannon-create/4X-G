@@ -115,4 +115,10 @@ public class Tile {
     public int[] getLocation(){
         return new int[]{x,y};
     }
+    public boolean hasOtherPlayers(Player player){
+        for(Piece p : pieces){
+            if(p.getPlayer() != player) return true;
+        }
+        return false;
+    }
 }

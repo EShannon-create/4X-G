@@ -165,6 +165,7 @@ public class General extends LandPiece implements Commander{
                 Tile t = X.getInstance().world.getAt(x,y,true);
                 if(t.hasWall() && onMove) continue;
                 if(t.hasBuilding() && onMove) continue;
+                if(t.hasOtherPlayers(player)) continue;
                 if(!t.hasPiece() && t.isLand()) moves[i][j] = GOTO;
                 if(t.isLand() && t.hasPiece() && t.getPiece().getPlayer() != getPlayer()){
                     moves[i][j] = GOTO;
@@ -287,5 +288,10 @@ public class General extends LandPiece implements Commander{
         bounds[1] = y1;
         bounds[2] = x2;
         bounds[3] = y2;
+    }
+
+    @Override
+    public boolean isChecked() {
+        return getTile().hasOtherPlayers(getPlayer());
     }
 }

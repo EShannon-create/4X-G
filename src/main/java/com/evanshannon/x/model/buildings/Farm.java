@@ -152,8 +152,11 @@ public class Farm extends Building{
         return farmRows;
     }
     public boolean upgrade(){
-        if(farmRows >= MAX_ROWS) return false;
+        if(!canUpgrade()) return false;
         farmRows++;
         return true;
+    }
+    public boolean canUpgrade(){
+        return farmRows < MAX_ROWS;
     }
 }

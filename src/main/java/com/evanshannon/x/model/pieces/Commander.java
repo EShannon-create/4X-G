@@ -9,4 +9,5 @@ public interface Commander{
     boolean remove(Piece piece);
     boolean inBounds(int x, int y);
     void updateBounds();
+    boolean isChecked();
 }
