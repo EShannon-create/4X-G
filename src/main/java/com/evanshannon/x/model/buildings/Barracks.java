@@ -5,6 +5,7 @@ import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.X;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.pieces.Piece;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -16,7 +17,9 @@ import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
 public class Barracks extends Building{
-    public static Node getModel(Texture texture){
+    public static final int CAPACITY = 8;
+    Piece[] pieces;
+    public static Node getModel(Texture texture, Piece[] pieces){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
         else assetManager = X.getInstance().getAssetManager();
@@ -82,15 +85,53 @@ public class Barracks extends Building{
         node.setLocalTranslation(0.5f,1f/6f,-0.5f);
         node.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
 
+        Node p;
+        for(int i = 0; i < pieces.length; i++){
+            if(pieces[i] == null) continue;
+            p = pieces[i].getModel();
+            p.setLocalScale(0.15f);
+
+            final float d = i < 4 ? 1f : 0.5f;
+            final float x = i % 2 == 0 ? d : -d;
+            final float y = i < 4 ? 4f/3f : 2f/3f;
+            final float z = i % 4 == 0 || i % 4 == 1 ? d : -d;
+
+            p.setLocalTranslation(x,y,z);
+
+            node.attachChild(p);
+        }
+
         Node n = new Node();
         n.attachChild(node);
         return n;
     }
     @Override
     public Node getModel() {
-        return getModel(getTexture());
+        return getModel(getTexture(),pieces);
     }
     public Barracks(Tile tile){
         super(tile);
+        pieces = new Piece[CAPACITY];
+    }
+    public boolean isFull(){
+        for(int i = 0; i < pieces.length; i++){
+            if(pieces[i] == null) return false;
+        }
+        return true;
+    }
+    public boolean addPiece(Piece piece){
+        for(int i = 0; i < pieces.length; i++) if(pieces[i] == null){
+            pieces[i] = piece;
+            System.out.println("Moved to barracks "+i);
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public Player getOwner(){
+        for(Piece piece : pieces){
+            if(piece != null) return piece.getPlayer();
+        }
+        return super.getOwner();
     }
 }

@@ -77,16 +77,16 @@ public class TileRenderer {
 
                 node.attachChild(g);
                 //System.out.println("\tAttached " + i + " " + j + " to chunk.");
-                if(tile.hasPiece()){
-                    Piece p = tile.getPiece();
-                    Node model = p.getModel();
-                    model.setLocalTranslation(i+0.5f,0,j-0.5f);
-                    node.attachChild(model);
-                }
                 if(tile.hasBuilding()){
                     Building b = tile.getBuilding();
                     Node model = b.getModel();
                     model.setLocalTranslation(i,0,j);
+                    node.attachChild(model);
+                }
+                else if(tile.hasPiece()){
+                    Piece p = tile.getPiece();
+                    Node model = p.getModel();
+                    model.setLocalTranslation(i+0.5f,0,j-0.5f);
                     node.attachChild(model);
                 }
             }

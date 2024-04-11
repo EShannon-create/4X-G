@@ -5,6 +5,7 @@ import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.buildings.Barracks;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -94,7 +95,7 @@ public class Rook extends LandPiece{
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
             if(t.hasWall()) break;
-            if(t.hasBuilding() && onMove) continue;
+            if(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2+i] = GOTO;
             if(t.hasPiece()) {
                 if(onMove) break;
@@ -107,7 +108,7 @@ public class Rook extends LandPiece{
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
             if(t.hasWall()) break;
-            if(t.hasBuilding() && onMove) continue;
+            if(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2][moves.length/2-i] = GOTO;
             if(t.hasPiece()) {
                 if(onMove) break;
@@ -120,7 +121,7 @@ public class Rook extends LandPiece{
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
             if(t.hasWall()) break;
-            if(t.hasBuilding() && onMove) continue;
+            if(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2+i][moves.length/2] = GOTO;
             if(t.hasPiece()) {
                 if(onMove) break;
@@ -133,7 +134,7 @@ public class Rook extends LandPiece{
             Tile t = X.getInstance().world.getAt(x,y,true);
             if(t.isWater()) break;
             if(t.hasWall()) break;
-            if(t.hasBuilding() && onMove) continue;
+            if(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove) continue;
             if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[moves.length/2-i][moves.length/2] = GOTO;
             if(t.hasPiece()) {
                 if(onMove) break;

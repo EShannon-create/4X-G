@@ -55,7 +55,7 @@ public class X extends SimpleApplication {
 
     private static final int SHADOWMAP_SIZE = 256;
     private static final float MIN_CAM_HEIGHT = 1.5f;
-    private static final float MAX_CAM_HEIGHT = 50f;
+    private static final float MAX_CAM_HEIGHT = 30f;
     private static final int SPAWN = 75;
     private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","Flag","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
 
@@ -412,12 +412,15 @@ public class X extends SimpleApplication {
                     int x = i+piece.getX()-moves.length/2;
                     int y = j+piece.getY()-moves.length/2;
 
+                    Tile t = world.getAt(x,y,false);
+                    final float elevation = t.hasBuilding() ? 0.5f : 0f;
+
                     Geometry g = new Geometry("^ "+x+" "+y,s);
                     Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
                     m.setColor("Color",ColorRGBA.fromRGBA255(200,200,200,255));
                     g.setMaterial(m);
 
-                    g.setLocalTranslation(i-moves.length/2,0,j-moves.length/2);
+                    g.setLocalTranslation(i-moves.length/2,elevation,j-moves.length/2);
                     g.setShadowMode(RenderQueue.ShadowMode.Off);
                     moveSpheres.attachChild(g);
                 }
@@ -585,20 +588,25 @@ public class X extends SimpleApplication {
     public void handleSelection(){
         Tile t = world.getAt(selectionX,selectionY,true);
 
+        Player player = turnHandler.getPOV();
+
         switch(selectionIndex){
-            case 0 -> {return;}
+            default -> {return;}
             case 1 -> new Farm(t);
             case 2 -> new Barracks(t);
-            case 3 -> new Factory(t);
+            case 3 -> {
+                new Factory(t);
+                player.onFactoryBuild();
+            }
             case 4 -> new Wall(t);
             case 5 -> new Flag(t,turnHandler.getPOV());
-            case 6 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new General(turnHandler.getPOV()));}
-            case 7 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Lieutenant(turnHandler.getPOV()));}
-            case 8 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Rook(turnHandler.getPOV()));}
-            case 9 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Bishop(turnHandler.getPOV()));}
-            case 10 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Knight(turnHandler.getPOV()));}
-            case 11 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Cannon(turnHandler.getPOV()));}
-            case 12 -> {if(turnHandler.getPOV().getFoodSurplus() > 0) t.setPiece(new Pawn(turnHandler.getPOV()));}
+            case 6 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new General(turnHandler.getPOV()));}
+            case 7 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Lieutenant(turnHandler.getPOV()));}
+            case 8 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Rook(turnHandler.getPOV()));}
+            case 9 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Bishop(turnHandler.getPOV()));}
+            case 10 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Knight(turnHandler.getPOV()));}
+            case 11 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Cannon(turnHandler.getPOV()));}
+            case 12 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Pawn(turnHandler.getPOV()));}
         }
 
 

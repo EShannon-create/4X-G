@@ -5,6 +5,7 @@ import com.evanshannon.x.X;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.buildings.Barracks;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -74,22 +75,22 @@ public class Pawn extends LandPiece{
         Tile t;
 
         t = X.getInstance().world.getAt(getX()+1,getY(),true);
-        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][1] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[2][1] = MOVE;
         t = X.getInstance().world.getAt(getX()-1,getY(),true);
-        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][1] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[0][1] = MOVE;
         t = X.getInstance().world.getAt(getX(),getY()+1,true);
-        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[1][2] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[1][2] = MOVE;
         t = X.getInstance().world.getAt(getX(),getY()-1,true);
-        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[1][0] = MOVE;
+        if(!t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[1][0] = MOVE;
 
         t = X.getInstance().world.getAt(getX()+1,getY()+1,true);
-        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][2] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[2][2] = ATCK;
         t = X.getInstance().world.getAt(getX()-1,getY()-1,true);
-        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][0] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[0][0] = ATCK;
         t = X.getInstance().world.getAt(getX()-1,getY()+1,true);
-        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[0][2] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[0][2] = ATCK;
         t = X.getInstance().world.getAt(getX()+1,getY()-1,true);
-        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && onMove)) moves[2][0] = ATCK;
+        if(t.hasPiece() && !t.isWater() && !(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove)) moves[2][0] = ATCK;
 
         return moves;
     }

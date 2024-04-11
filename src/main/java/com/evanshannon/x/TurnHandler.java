@@ -18,6 +18,11 @@ public class TurnHandler {
     }
     public void endTurn(){
         getPOV().endTurn();
+        do{
+            next();
+        } while(!getPOV().beginTurn());
+    }
+    private void next(){
         playerIndex++;
         if(playerIndex >= players.length){
             playerIndex = 0;

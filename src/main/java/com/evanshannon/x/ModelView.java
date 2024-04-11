@@ -1,5 +1,6 @@
 package com.evanshannon.x;
 
+import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.buildings.*;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
@@ -55,11 +56,14 @@ public class ModelView extends SimpleApplication {
         ambientLight.setEnabled(true);
         rootNode.addLight(ambientLight);
 
+        Player p = new Player("",TextureHandler.RED);
+        Piece[] pieces = {new Pawn(p),new Bishop(p),new Rook(p), new Cannon(p), new General(p), new Lieutenant(p), new Knight(p), new Pawn(p)};
+
         Node building;
         //building = Farm.getModel(TextureHandler.RED,6);
         //building = Factory.getModel(TextureHandler.RED);
-        //building = Barracks.getModel(TextureHandler.RED);
-        building = Flag.getModel(TextureHandler.RED);
+        building = Barracks.getModel(TextureHandler.RED, pieces);
+        //building = Flag.getModel(TextureHandler.RED);
 
         Quad q = new Quad(1f,1f);
         Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");

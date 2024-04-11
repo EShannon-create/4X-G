@@ -20,6 +20,8 @@ public class Player {
     private Vector3f location;
     private final ArrayList<Flag> flags = new ArrayList<>();
     private int flagIndex;
+    private int factoryLag = 0;
+    public static final int FACTORY_LAG = 5;
 
     public Player(String name, Texture texture){
         this.name = name;
@@ -38,6 +40,14 @@ public class Player {
     }
     public void onMove(Commander commander){
         moved.add(commander);
+    }
+    public boolean beginTurn(){
+        if(pieces.size() == 0) return false;
+        if(factoryLag > 0){
+            factoryLag--;
+            return false;
+        }
+        return true;
     }
     public void endTurn(){
         moved = new HashSet<>();
@@ -129,5 +139,8 @@ public class Player {
         for(Piece p : pieces){
             if(p.getCommander() == null) p.findCommander();
         }
+    }
+    public void onFactoryBuild(){
+        factoryLag = FACTORY_LAG;
     }
 }

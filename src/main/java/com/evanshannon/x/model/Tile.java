@@ -57,6 +57,7 @@ public class Tile {
         return building instanceof Wall;
     }
     public void clearPiece(){
+        if(piece == null) return;
         this.piece.setLocation(Integer.MIN_VALUE,Integer.MIN_VALUE);//Error avoidance
         this.piece = null;
     }

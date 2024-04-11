@@ -5,6 +5,7 @@ import com.evanshannon.x.X;
 import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.buildings.Barracks;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -69,10 +70,10 @@ public abstract class Piece {
         Node n = getModel();
         Quaternion q = new Quaternion();
         switch(direction){
-            case NORTH -> q.fromAngles(0,FastMath.HALF_PI,0);
-            case SOUTH -> q.fromAngles(0,3*FastMath.HALF_PI,0);
-            case EAST -> q.fromAngles(0,FastMath.PI,0);
-            case WEST -> q.fromAngles(0,0,0);
+            case NORTH -> q.fromAngles(0,0*FastMath.HALF_PI,0);
+            case SOUTH -> q.fromAngles(0,2*FastMath.HALF_PI,0);
+            case EAST -> q.fromAngles(0,1*FastMath.HALF_PI,0);
+            case WEST -> q.fromAngles(0,3*FastMath.HALF_PI,0);
         }
         n.setLocalRotation(q);
     }
@@ -115,7 +116,7 @@ public abstract class Piece {
         catch(RuntimeException e){
             return new int[][]{{0}};
         }
-        int[][] canMove = moveMap(onMove);
+        int[][] canMove = getTile().hasBuilding() && getTile().getBuilding() instanceof Barracks ? getDeployment(onMove) : moveMap(onMove);
 
         HashSet<int[][]> moves = new HashSet<>();
         for(Piece commander : X.getInstance().world.getCommanders()){
@@ -166,20 +167,37 @@ public abstract class Piece {
 
         return c;
     }
+    public void face(int x, int y){
+        final int dx = x-this.x;
+        final int dy = y-this.y;
+        if(dx > 0 && dx > MathLib.abs(dy)) face(Direction.EAST);
+        else if(dx <= 0 && -dx > MathLib.abs(dy)) face(Direction.WEST);
+        else if(dy > 0) face(Direction.NORTH);
+        else face(Direction.SOUTH);
+    }
 
     public void move(int x, int y){
         if(!player.canMove(this)) return;
         Tile tile = X.getInstance().world.getAt(this.x,this.y,true);
+        face(x,y);
+
         tile.clearPiece();
 
         tile = X.getInstance().world.getAt(x,y,true);
-        tile.setPiece(this);
         this.x = x;
         this.y = y;
+        if(tile.hasBuilding() && tile.getBuilding() instanceof Barracks barracks){
+            System.out.println("Moving to barracks...");
+            barracks.addPiece(this);
+        }
+        else{
+            tile.setPiece(this);
+            player.onMove(commander);//If we disabled movement when adding a piece to a barracks that would be horrible I think
+        }
 
         if(this instanceof Commander c){
             c.updateBounds();
-            player.onMove(c);
+            if(!tile.hasBuilding()) player.onMove(c);
             updatePossession();
             return;
         }
@@ -190,7 +208,6 @@ public abstract class Piece {
             findCommander();
         }
         commander.updateBounds();
-        player.onMove(commander);
         updatePossession();
     }
     public void jump(int x, int y){
@@ -228,7 +245,7 @@ public abstract class Piece {
         if(this instanceof Commander c){
             Piece[] connected = c.getConnected();
             for(Piece piece : connected){
-                piece.removeCommander();
+                if(piece != null) piece.removeCommander();
             }
         }
     }
@@ -277,5 +294,22 @@ public abstract class Piece {
     }
     public Tile getTile(){
         return X.getInstance().world.getAt(x,y,true);
+    }
+    public int[][] getDeployment(boolean onMove){
+        final int SIZE = 15;
+        int[][] moves = new int[SIZE][SIZE];
+        for(int i = 0; i < SIZE; i++){
+            for(int j = 0; j < SIZE; j++){
+                final int x = getX()+i-moves.length/2;
+                final int y = getY()+j-moves[i].length/2;
+                Tile t = X.getInstance().world.getAt(x,y,true);
+                if(t.isWater()) continue;
+                if(t.hasWall()) continue;
+                if(t.hasBuilding() && !(t.getBuilding() instanceof Barracks) && onMove) continue;
+                if(!t.hasPiece() || t.getPiece().getPlayer() != getPlayer()) moves[i][j] = GOTO;
+                if(t.hasPiece()) moves[i][i] = CHCK;
+            }
+        }
+        return moves;
     }
 }
