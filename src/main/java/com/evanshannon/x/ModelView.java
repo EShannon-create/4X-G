@@ -1,7 +1,6 @@
 package com.evanshannon.x;
 
 import com.evanshannon.x.model.Player;
-import com.evanshannon.x.model.buildings.*;
 import com.evanshannon.x.model.pieces.*;
 import com.jme3.app.SimpleApplication;
 import com.jme3.light.AmbientLight;
@@ -16,7 +15,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.system.AppSettings;
-import com.jme3.texture.Texture;
 
 /**
  * This is the Main Class of your Game. It should boot up your game and do initial initialisation
@@ -57,13 +55,10 @@ public class ModelView extends SimpleApplication {
         rootNode.addLight(ambientLight);
 
         Player p = new Player("",TextureHandler.RED);
-        Piece[] pieces = {new Pawn(p),new Bishop(p),new Rook(p), new Cannon(p), new General(p), new Lieutenant(p), new Knight(p), new Pawn(p)};
+        LandPiece[] pieces = {new Pawn(p),new Bishop(p),new Rook(p), new Cannon(p), new General(p), new Lieutenant(p), new Knight(p), new Pawn(p)};
 
-        Node building;
-        //building = Farm.getModel(TextureHandler.RED,6);
-        //building = Factory.getModel(TextureHandler.RED);
-        building = Barracks.getModel(TextureHandler.RED, pieces);
-        //building = Flag.getModel(TextureHandler.RED);
+        Node node;
+        node = Amphibian.getModel(TextureHandler.RED,pieces);
 
         Quad q = new Quad(1f,1f);
         Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
@@ -82,7 +77,7 @@ public class ModelView extends SimpleApplication {
         g2.setLocalRotation(r2);
         g2.setLocalTranslation(0,0,-1);
 
-        rootNode.attachChild(building);
+        rootNode.attachChild(node);
         rootNode.attachChild(g);
         rootNode.attachChild(g2);
     }
