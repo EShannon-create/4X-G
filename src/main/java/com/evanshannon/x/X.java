@@ -161,24 +161,8 @@ public class X extends SimpleApplication {
         @Override
         public void onAction(String name, boolean keyPressed, float tps) {
             switch(name){
-                case "X" -> {
-                    if(keyPressed){
-                        for(Piece piece : world.getCommanders()){
-                            showBounds(piece);
-                        }
-                    }
-                    else{
-                        clearBounds();
-                    }
-                }
                 case "G" -> {
                     if(keyPressed) endTurn();
-                }
-                case "T" -> {
-                    if(keyPressed){
-                        clearMoveSpheres();
-                        sw = true;
-                    }
                 }
                 case "R" -> {
                     if(keyPressed){

@@ -186,9 +186,9 @@ public abstract class Piece {
         tile = X.getInstance().world.getAt(x,y,true);
         this.x = x;
         this.y = y;
-        if(tile.hasBuilding() && tile.getBuilding() instanceof Barracks barracks){
+        if(tile.hasBuilding() && tile.getBuilding() instanceof Barracks barracks && this instanceof LandPiece p){
             System.out.println("Moving to barracks...");
-            barracks.addPiece(this);
+            barracks.addPiece(p);
         }
         else{
             tile.setPiece(this);

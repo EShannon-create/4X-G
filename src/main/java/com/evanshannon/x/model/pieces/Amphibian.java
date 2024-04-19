@@ -3,6 +3,7 @@ package com.evanshannon.x.model.pieces;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.X;
+import com.evanshannon.x.model.PieceContainer;
 import com.evanshannon.x.model.Player;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -16,8 +17,8 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 
-public class Amphibian extends SeaPiece{
-    public static Node getModel(Texture texture, LandPiece[] pieces){
+public class Amphibian extends SeaPiece implements PieceContainer {
+    public static Node getModel(Texture texture, Piece[] pieces){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
         else assetManager = X.getInstance().getAssetManager();
@@ -112,7 +113,7 @@ public class Amphibian extends SeaPiece{
 
     public static final int CAPACITY = 8;
 
-    private final LandPiece[] pieces;
+    private final Piece[] pieces;
     public Amphibian(Player player) {
         super(player);
         pieces = new LandPiece[CAPACITY];
@@ -122,7 +123,7 @@ public class Amphibian extends SeaPiece{
     public Node getModel() {
         return getModel(player.getTexture(),pieces);
     }
-    public boolean addPiece(LandPiece piece){
+    public boolean addPiece(Piece piece){
         for(int i = 0; i < pieces.length; i++){
             if(pieces[i] == null){
                 pieces[i] = piece;
@@ -133,15 +134,15 @@ public class Amphibian extends SeaPiece{
     }
     public int countPieces(){
         int count = 0;
-        for (LandPiece piece : pieces) {
+        for (Piece piece : pieces) {
             if (piece != null) count++;
         }
         return count;
     }
-    public boolean atCapacity(){
+    public boolean isFull(){
         return countPieces() >= CAPACITY;
     }
-    public boolean removePiece(LandPiece piece){
+    public boolean removePiece(Piece piece){
         for(int i = 0; i < pieces.length; i++){
             if(pieces[i] == piece){
                 pieces[i] = null;

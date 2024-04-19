@@ -3,8 +3,10 @@ package com.evanshannon.x.model.buildings;
 import com.evanshannon.x.ModelView;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.X;
+import com.evanshannon.x.model.PieceContainer;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
+import com.evanshannon.x.model.pieces.LandPiece;
 import com.evanshannon.x.model.pieces.Piece;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -16,7 +18,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
-public class Barracks extends Building{
+public class Barracks extends Building implements PieceContainer {
     public static final int CAPACITY = 8;
     Piece[] pieces;
     public static Node getModel(Texture texture, Piece[] pieces){
@@ -111,19 +113,32 @@ public class Barracks extends Building{
     }
     public Barracks(Tile tile){
         super(tile);
-        pieces = new Piece[CAPACITY];
+        pieces = new LandPiece[CAPACITY];
     }
     public boolean isFull(){
-        for(int i = 0; i < pieces.length; i++){
-            if(pieces[i] == null) return false;
+        return countPieces() >= CAPACITY;
+    }
+    public int countPieces(){
+        int count = 0;
+        for (Piece piece : pieces) {
+            if (piece != null) count++;
         }
-        return true;
+        return count;
     }
     public boolean addPiece(Piece piece){
         for(int i = 0; i < pieces.length; i++) if(pieces[i] == null){
             pieces[i] = piece;
             System.out.println("Moved to barracks "+i);
             return true;
+        }
+        return false;
+    }
+    public boolean removePiece(Piece piece){
+        for(int i = 0; i < pieces.length; i++){
+            if(pieces[i] == piece){
+                pieces[i] = null;
+                return true;
+            }
         }
         return false;
     }
