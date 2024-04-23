@@ -53,6 +53,13 @@ public class X extends SimpleApplication {
     private int selectionX = 0;
     private int selectionY = 0;
 
+    public static final int[] RESOLUTION = {1920,1070};
+    public static String USERNAME = "";
+    public static String COLOR = null;
+    public static Server SERVER = null;
+    public static Client CLIENT = null;
+
+    public static final int PORT = 1490;
     private static final int SHADOWMAP_SIZE = 256;
     private static final float MIN_CAM_HEIGHT = 1.5f;
     private static final float MAX_CAM_HEIGHT = 30f;
@@ -60,11 +67,14 @@ public class X extends SimpleApplication {
     private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","Flag","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
 
     public static void main(String[] args) {
+        Menu.start();
+    }
+    public static void launchApp(){
         X app = new X();
         instance = app;
 
         AppSettings settings = new AppSettings(true);
-        settings.setResolution(1920,1070);
+        settings.setResolution(RESOLUTION[0],RESOLUTION[1]);
         settings.setFullscreen(false);
         app.setSettings(settings);
 
