@@ -17,7 +17,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 
-public class Amphibian extends SeaPiece implements PieceContainer {
+public class Transport extends SeaPiece implements PieceContainer {
     public static Node getModel(Texture texture, Piece[] pieces){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
@@ -114,7 +114,7 @@ public class Amphibian extends SeaPiece implements PieceContainer {
     public static final int CAPACITY = 8;
 
     private final Piece[] pieces;
-    public Amphibian(Player player) {
+    public Transport(Player player) {
         super(player);
         pieces = new LandPiece[CAPACITY];
     }
@@ -155,5 +155,9 @@ public class Amphibian extends SeaPiece implements PieceContainer {
     @Override
     int[][] moveMap(boolean onMove) {
         return new int[0][];
+    }
+    @Override
+    public String getCode(){
+        return "Transport";
     }
 }

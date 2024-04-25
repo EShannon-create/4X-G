@@ -16,13 +16,12 @@ public class Player {
     private final String name;
     private HashSet<Commander> moved;
     private int builds;
-    private final HashSet<Piece> pieces;
+    private HashSet<Piece> pieces;
     private Vector3f location;
     private final ArrayList<Flag> flags = new ArrayList<>();
     private int flagIndex;
     private int factoryLag = 0;
     public static final int FACTORY_LAG = 5;
-
     public Player(String name, Texture texture){
         this.name = name;
         this.texture = texture;
@@ -142,5 +141,8 @@ public class Player {
     }
     public void onFactoryBuild(){
         factoryLag = FACTORY_LAG;
+    }
+    public void nuke(){
+        pieces = new HashSet<>();
     }
 }

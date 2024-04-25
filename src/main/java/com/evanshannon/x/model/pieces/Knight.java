@@ -99,4 +99,8 @@ public class Knight extends LandPiece{
                 {NONE, GOTO, NONE, GOTO, NONE}
         };
     }
+    @Override
+    public String getCode(){
+        return "Knight";
+    }
 }

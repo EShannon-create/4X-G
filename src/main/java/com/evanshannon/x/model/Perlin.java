@@ -1,6 +1,7 @@
 package com.evanshannon.x.model;
 
 import com.evanshannon.x.MathLib;
+import com.evanshannon.x.X;
 
 import java.util.Random;
 
@@ -8,7 +9,7 @@ public class Perlin {
     private static final int[] p = new int[512];
 
     public Perlin(){
-        Random r = new Random();
+        Random r = new Random(X.seed);
         for(int i = 0; i < 256; i++){
             p[i] = i;
         }

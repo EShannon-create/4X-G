@@ -544,4 +544,8 @@ public class Wall extends Building {
             }
         }
     }
+    @Override
+    public String getCode(){
+        return "Wall";
+    }
 }

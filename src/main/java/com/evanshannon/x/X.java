@@ -30,14 +30,14 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.ui.Picture;
-import org.w3c.dom.Text;
 
-import static com.evanshannon.x.MathLib.roll;
 import static com.evanshannon.x.model.Chunk.CHUNK_SIZE;
 
 public class X extends SimpleApplication {
+    public static int seed;
 
     private static X instance;
+
     public World world = new World();
     private int[] oldloc;
     private Node horizon;
@@ -58,6 +58,7 @@ public class X extends SimpleApplication {
     public static String COLOR = null;
     public static Server SERVER = null;
     public static Client CLIENT = null;
+    public static boolean running = true;
 
     public static final int PORT = 1490;
     private static final int SHADOWMAP_SIZE = 256;
@@ -70,6 +71,7 @@ public class X extends SimpleApplication {
         Menu.start();
     }
     public static void launchApp(){
+        System.out.println("Launching...");
         X app = new X();
         instance = app;
 
@@ -505,13 +507,20 @@ public class X extends SimpleApplication {
             t = world.getAt(x,y,true);
             found = t.isLand() && t.getNorth().isLand() && t.getSouth().isLand() && t.getEast().isLand() && t.getWest().isLand();
         }
+
+        String begin = "";
+
         t.setPiece(new General(player));
+
+
         Tile[] tiles = {t.getNorth(),t.getSouth(),t.getEast(),t.getWest()};
         MathLib.shuffle(tiles);
+
         Farm f = new Farm(tiles[0]);
         f.upgrade();
         f.upgrade();
         f.upgrade();
+
         new Factory(tiles[1]);
         new Barracks(tiles[2]);
         tiles[3].setPiece(new Pawn(player));
@@ -584,24 +593,29 @@ public class X extends SimpleApplication {
 
         Player player = turnHandler.getPOV();
 
+        Building b = null;
+        Piece p = null;
+
         switch(selectionIndex){
             default -> {return;}
-            case 1 -> new Farm(t);
-            case 2 -> new Barracks(t);
+            case 1 -> b = new Farm(t);
+            case 2 -> b = new Barracks(t);
             case 3 -> {
-                new Factory(t);
+                b = new Factory(t);
                 player.onFactoryBuild();
             }
-            case 4 -> new Wall(t);
-            case 5 -> new Flag(t,turnHandler.getPOV());
-            case 6 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new General(turnHandler.getPOV()));}
-            case 7 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Lieutenant(turnHandler.getPOV()));}
-            case 8 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Rook(turnHandler.getPOV()));}
-            case 9 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Bishop(turnHandler.getPOV()));}
-            case 10 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Knight(turnHandler.getPOV()));}
-            case 11 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Cannon(turnHandler.getPOV()));}
-            case 12 -> {if(player.getFoodSurplus() <= 0) return; t.setPiece(new Pawn(turnHandler.getPOV()));}
+            case 4 -> b = new Wall(t);
+            case 5 -> b = new Flag(t,turnHandler.getPOV());
+            case 6 -> {if(player.getFoodSurplus() <= 0) return; p = new General(turnHandler.getPOV()); t.setPiece(p);}
+            case 7 -> {if(player.getFoodSurplus() <= 0) return; p = new Lieutenant(turnHandler.getPOV()); t.setPiece(p);}
+            case 8 -> {if(player.getFoodSurplus() <= 0) return; p = new Rook(turnHandler.getPOV()); t.setPiece(p);}
+            case 9 -> {if(player.getFoodSurplus() <= 0) return; p = new Bishop(turnHandler.getPOV()); t.setPiece(p);}
+            case 10 -> {if(player.getFoodSurplus() <= 0) return; p = new Knight(turnHandler.getPOV()); t.setPiece(p);}
+            case 11 -> {if(player.getFoodSurplus() <= 0) return; p = new Cannon(turnHandler.getPOV()); t.setPiece(p);}
+            case 12 -> {if(player.getFoodSurplus() <= 0) return; p = new Pawn(turnHandler.getPOV()); t.setPiece(p);}
         }
+        if(b != null) broadcast(MessageParser.build(b,selectionX,selectionY));
+        else broadcast(MessageParser.build(p,selectionX,selectionY));
 
 
         int cx = MathLib.divide(selectionX,CHUNK_SIZE);
@@ -620,5 +634,43 @@ public class X extends SimpleApplication {
 
         turnHandler.getPOV().onBuild();
         if(t.hasPiece()) t.getPiece().updatePossession();
+    }
+    public Player parsePlayer(int index){
+        return turnHandler.getPlayers()[index];
+    }
+    public int getPlayerIndex(Player player){
+        for(int i = 0; i < turnHandler.getPlayers().length; i++){
+            if(turnHandler.getPlayers()[i] == player) return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public void destroy(){
+        System.out.println("Done!");
+        running = false;
+        if(SERVER != null) SERVER.stop();
+        else if(CLIENT != null) CLIENT.stop();
+        super.destroy();
+    }
+    public void broadcast(String message){
+        if(SERVER != null) SERVER.broadcast(message);
+        else if(CLIENT != null) CLIENT.broadcast(message);
+    }
+    public String getInitString(){
+        String init = "nuke\nseed " + seed+"\n";
+
+        init += world.getInitString();
+        for(Player p : turnHandler.getPlayers()){
+            if(p != null) init += MessageParser.tp(p,(int)p.getLocation().x,(int)p.getLocation().z)+"\n";
+        }
+
+        return init+"quit";
+    }
+    public void nuke(){
+        world.nuke();
+        for(Player p : turnHandler.getPlayers()){
+            p.nuke();
+        }
     }
 }

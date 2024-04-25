@@ -14,4 +14,8 @@ public class Mine extends Building{
     public Node getModel() {
         return null;
     }
+    @Override
+    public String getCode(){
+        return "Mine";
+    }
 }

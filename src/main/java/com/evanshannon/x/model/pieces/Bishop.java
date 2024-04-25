@@ -157,4 +157,8 @@ public class Bishop extends LandPiece{
 
         return moves;
     }
+    @Override
+    public String getCode(){
+        return "Bishop";
+    }
 }

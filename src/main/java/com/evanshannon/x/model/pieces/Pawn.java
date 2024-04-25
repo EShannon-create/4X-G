@@ -94,4 +94,8 @@ public class Pawn extends LandPiece{
 
         return moves;
     }
+    @Override
+    public String getCode(){
+        return "Pawn";
+    }
 }

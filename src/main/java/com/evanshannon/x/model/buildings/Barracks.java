@@ -1,8 +1,6 @@
 package com.evanshannon.x.model.buildings;
 
-import com.evanshannon.x.ModelView;
-import com.evanshannon.x.TextureHandler;
-import com.evanshannon.x.X;
+import com.evanshannon.x.*;
 import com.evanshannon.x.model.PieceContainer;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
@@ -20,7 +18,7 @@ import com.jme3.texture.Texture;
 
 public class Barracks extends Building implements PieceContainer {
     public static final int CAPACITY = 8;
-    Piece[] pieces;
+    private Piece[] pieces;
     public static Node getModel(Texture texture, Piece[] pieces){
         AssetManager assetManager;
         if(ModelView.RUNNING_MODEL_VIEW) assetManager = ModelView.getInstance().getAssetManager();
@@ -148,5 +146,25 @@ public class Barracks extends Building implements PieceContainer {
             if(piece != null) return piece.getPlayer();
         }
         return super.getOwner();
+    }
+    public Piece getPiece(int index){
+        return pieces[index];
+    }
+    public int getIndex(Piece piece){
+        for(int i = 0; i < pieces.length; i++){
+            if(pieces[i] == piece) return i;
+        }
+        return -1;
+    }
+    @Override
+    public String getCode(){
+        return "Barracks";
+    }
+    public String getInitString(){
+        String init = "";
+        for(Piece piece : pieces){
+            if(piece != null) init += MessageParser.build(piece,tile.getLocation()[0],tile.getLocation()[1])+'\n';
+        }
+        return init;
     }
 }

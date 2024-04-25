@@ -18,12 +18,12 @@ import com.jme3.texture.Texture;
 
 public class Flag extends Building{
     private static final boolean TWO_FLAG = true;
-    private Player player;
-    private Flag(Tile tile) {
-        super(tile);
+    private final Player player;
+    public Flag(Tile tile) {
+        this(tile, tile.getOwner());
     }
     public Flag(Tile tile, Player player){
-        this(tile);
+        super(tile);
         this.player = player;
         player.registerFlag(this);
     }
@@ -110,5 +110,9 @@ public class Flag extends Building{
     @Override
     public Player getOwner() {
         return player;
+    }
+    @Override
+    public String getCode(){
+        return "Farm";
     }
 }

@@ -58,7 +58,7 @@ public class ModelView extends SimpleApplication {
         LandPiece[] pieces = {new Pawn(p),new Bishop(p),new Rook(p), new Cannon(p), new General(p), new Lieutenant(p), new Knight(p), new Pawn(p)};
 
         Node node;
-        node = Amphibian.getModel(TextureHandler.RED,pieces);
+        node = Transport.getModel(TextureHandler.RED,pieces);
 
         Quad q = new Quad(1f,1f);
         Material m = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");

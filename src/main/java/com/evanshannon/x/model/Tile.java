@@ -1,8 +1,10 @@
 package com.evanshannon.x.model;
 
 import com.evanshannon.x.X;
+import com.evanshannon.x.model.buildings.Barracks;
 import com.evanshannon.x.model.buildings.Building;
 import com.evanshannon.x.model.buildings.Wall;
+import com.evanshannon.x.model.pieces.LandPiece;
 import com.evanshannon.x.model.pieces.Piece;
 
 import java.util.HashMap;
@@ -33,7 +35,14 @@ public class Tile {
     }
     public void setPiece(Piece piece){
         if(this.piece != null) this.piece.onDestroy();
-        this.piece = piece;
+
+        if(building != null && building instanceof Barracks b && piece instanceof LandPiece p) b.addPiece(p);
+        else {
+            this.piece = piece;
+
+            if(piece.getCommander() != null)
+                piece.getPlayer().onMove(piece.getCommander());//I think it would be awful if moving into a barracks counted as a move
+        }
         piece.setLocation(x,y);
     }
     public boolean setBuilding(Building building){

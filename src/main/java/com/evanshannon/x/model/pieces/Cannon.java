@@ -132,4 +132,8 @@ public class Cannon extends LandPiece{
 
         return moves;
     }
+    @Override
+    public String getCode(){
+        return "Cannon";
+    }
 }

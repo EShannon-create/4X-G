@@ -1,6 +1,8 @@
 package com.evanshannon.x.model.pieces;
 
 import com.evanshannon.x.MathLib;
+import com.evanshannon.x.Menu;
+import com.evanshannon.x.MessageParser;
 import com.evanshannon.x.X;
 import com.evanshannon.x.model.Chunk;
 import com.evanshannon.x.model.Player;
@@ -177,23 +179,28 @@ public abstract class Piece {
     }
 
     public void move(int x, int y){
+        move(x,y,true);
+    }
+    public void move(int x, int y, boolean broadcast){
         if(!player.canMove(this)) return;
+
         Tile tile = X.getInstance().world.getAt(this.x,this.y,true);
-        face(x,y);
+        if(broadcast){
+            if(tile.hasBuilding() && tile.getBuilding() instanceof Barracks b){
+                final int index = b.getIndex(this);
+                X.getInstance().broadcast(MessageParser.deploy(this.x,this.y,x,y,index));
+            }
+            else X.getInstance().broadcast(MessageParser.move(this.x,this.y,x,y));
+        }
 
         tile.clearPiece();
 
         tile = X.getInstance().world.getAt(x,y,true);
         this.x = x;
         this.y = y;
-        if(tile.hasBuilding() && tile.getBuilding() instanceof Barracks barracks && this instanceof LandPiece p){
-            System.out.println("Moving to barracks...");
-            barracks.addPiece(p);
-        }
-        else{
-            tile.setPiece(this);
-            player.onMove(commander);//If we disabled movement when adding a piece to a barracks that would be horrible I think
-        }
+        face(x,y);
+
+        tile.setPiece(this);
 
         if(this instanceof Commander c){
             c.updateBounds();
@@ -211,14 +218,20 @@ public abstract class Piece {
         updatePossession();
     }
     public void jump(int x, int y){
+        jump(x,y,true);
+    }
+    public void jump(int x, int y, boolean broadcast){
         if(!player.canMove(this)) return;
+
+        if(broadcast) X.getInstance().broadcast(MessageParser.jump(this.x,this.y,x,y));
+
         final int jumpX = (x-getX())/2+getX();
         final int jumpY = (y-getY())/2+getY();
 
         Tile tile = X.getInstance().world.getAt(jumpX,jumpY,true);
         tile.clearPiece();
         tile.setBuilding(null);
-        move(x,y);
+        move(x,y,false);
     }
     public int getX(){
         return x;
@@ -247,6 +260,7 @@ public abstract class Piece {
             for(Piece piece : connected){
                 if(piece != null) piece.removeCommander();
             }
+            X.getInstance().world.removeCommander(c);
         }
     }
     public boolean findCommander(){
@@ -312,4 +326,5 @@ public abstract class Piece {
         }
         return moves;
     }
+    public abstract String getCode();
 }

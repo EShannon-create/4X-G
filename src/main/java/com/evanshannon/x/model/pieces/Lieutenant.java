@@ -244,4 +244,8 @@ public class Lieutenant extends LandPiece{
 
         return moves;
     }
+    @Override
+    public String getCode(){
+        return "Lieutenant";
+    }
 }

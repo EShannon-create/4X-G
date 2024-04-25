@@ -144,4 +144,8 @@ public class Rook extends LandPiece{
 
         return moves;
     }
+    @Override
+    public String getCode(){
+        return "Rook";
+    }
 }

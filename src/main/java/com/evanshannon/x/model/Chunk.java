@@ -1,5 +1,8 @@
 package com.evanshannon.x.model;
 
+import com.evanshannon.x.MessageParser;
+import com.evanshannon.x.model.buildings.Barracks;
+import com.evanshannon.x.model.pieces.Piece;
 import com.jme3.scene.Node;
 
 public class Chunk {
@@ -51,5 +54,14 @@ public class Chunk {
     }
     public void clearNode(){
         node = null;
+    }
+    protected String getInitString(){
+        String init = "";
+        for(Tile[] tt : tiles) for(Tile t : tt){
+            if(t.hasBuilding()) init += MessageParser.build(t.getBuilding(),t.getLocation()[0],t.getLocation()[1])+'\n';
+            if (t.hasBuilding() && t.getBuilding() instanceof Barracks b) init += b.getInitString();
+            if(t.hasPiece()) init += MessageParser.build(t.getPiece(),t.getLocation()[0],t.getLocation()[1])+'\n';
+        }
+        return init;
     }
 }

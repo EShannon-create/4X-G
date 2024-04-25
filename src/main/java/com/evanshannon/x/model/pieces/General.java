@@ -295,4 +295,8 @@ public class General extends LandPiece implements Commander{
     public boolean isChecked() {
         return getTile().hasOtherPlayers(getPlayer());
     }
+    @Override
+    public String getCode(){
+        return "General";
+    }
 }

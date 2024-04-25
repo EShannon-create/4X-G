@@ -7,6 +7,7 @@ package com.evanshannon.x;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  *
@@ -149,9 +150,6 @@ public class Menu extends javax.swing.JFrame {
             }
         });
     }
-    public static void main(String[] args){
-        start();
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> comboBox;
@@ -165,19 +163,25 @@ public class Menu extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void launchServer(){
-        initApp();
+        if(!initApp()) return;
+
+        X.seed = MathLib.roll(Integer.MIN_VALUE,Integer.MAX_VALUE);
 
         X.SERVER = new Server();
-        try{
-            X.SERVER.start(X.PORT);
-        } catch (IOException e) {
-            error(e.getMessage());
-        }
+        Thread server = new Thread(() -> {
+            try {
+                X.SERVER.start(X.PORT);
+            } catch (IOException e) {
+                error(e.getMessage());
+            }
+        });
+        server.start();
 
         X.launchApp();
+        dispose();
     }
     private void launchClient(){
-        initApp();
+        if(!initApp()) return;
 
         final String ip = hostField.getText();
         X.CLIENT = new Client();
@@ -188,29 +192,35 @@ public class Menu extends javax.swing.JFrame {
         }
 
         X.launchApp();
+        dispose();
     }
-    private void initApp(){
+    private boolean initApp(){
         final int x = Integer.parseInt(((String)resolution.getSelectedItem()).split("x")[0]);
         final int y = Integer.parseInt(((String)resolution.getSelectedItem()).split("x")[1]);
         X.RESOLUTION[0] = x;
         X.RESOLUTION[1] = y;
+        System.out.println("Resolution: " + X.RESOLUTION[0] + "x" + X.RESOLUTION[1]);
 
         final String username = usernameText.getText();
         if(username.isBlank()){
             error("Username must not be blank!");
-            return;
+            return false;
         }
         X.USERNAME = username;
+        System.out.println("Username: " + X.USERNAME);
 
         final String color = (String)comboBox.getSelectedItem();
-        if(color == null) return;
+        if(color == null) return false;
         if(color.equals(comboBox.getItemAt(0))){
             error("You must select a color!");
-            return;
+            return false;
         }
         X.COLOR = color;
+        System.out.println("Color: " + X.COLOR);
+        return true;
     }
     private void error(String message){
+        System.out.println("Error: " +message);
         JOptionPane.showMessageDialog(this,message,"Error",JOptionPane.ERROR_MESSAGE);
     }
 }

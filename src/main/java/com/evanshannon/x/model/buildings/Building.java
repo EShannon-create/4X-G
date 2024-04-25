@@ -52,4 +52,5 @@ public abstract class Building {
         }
         return builds;
     }
+    public abstract String getCode();
 }

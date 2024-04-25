@@ -58,4 +58,8 @@ public class Admiral extends SeaPiece implements Commander{
     public boolean isChecked() {
         return false;
     }
+    @Override
+    public String getCode(){
+        return "Admiral";
+    }
 }

@@ -80,4 +80,8 @@ public class Factory extends Building {
     public Node getModel() {
         return getModel(getTexture());
     }
+    @Override
+    public String getCode(){
+        return "Factory";
+    }
 }

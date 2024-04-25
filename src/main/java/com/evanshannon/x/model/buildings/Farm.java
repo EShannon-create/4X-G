@@ -159,4 +159,8 @@ public class Farm extends Building{
     public boolean canUpgrade(){
         return farmRows < MAX_ROWS;
     }
+    @Override
+    public String getCode(){
+        return "Farm";
+    }
 }

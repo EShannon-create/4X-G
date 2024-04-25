@@ -57,4 +57,15 @@ public class World {
         }
         return pieces;
     }
+    public void nuke(){
+        commanders = new HashSet<>();
+        map = new HashMap<>();
+    }
+    public String getInitString(){
+        String init = "";
+        for(HashMap<Integer,Chunk> h : map.values()) for(Chunk c : h.values()){
+            init += c.getInitString();
+        }
+        return init;
+    }
 }
