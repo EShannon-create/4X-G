@@ -8,7 +8,7 @@ public class Server {
     private ServerSocket serverSocket;
     private ServerConnection[] connections;
     private Thread[] cThreads;
-    private static final int CAPACITY = 6;
+    private static final int CAPACITY = 5;
 
     public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -23,6 +23,7 @@ public class Server {
     private void accept(int index){
         try {
             connections[index] = new ServerConnection(serverSocket.accept());
+            IO.print("Connection established at index " + (index) + "!");
             connections[index].start();
         }
         catch(SocketException e){

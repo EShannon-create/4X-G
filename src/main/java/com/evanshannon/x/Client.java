@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class Client {
@@ -14,7 +16,9 @@ public class Client {
     private BufferedReader in;
 
     public void startConnection(String ip, int port) throws IOException {
+        IO.print("Attempting to connect to " + ip + "!");
         clientSocket = new Socket(ip, port);
+        IO.print("Connected successfully!");
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -22,16 +26,42 @@ public class Client {
         thread.start();
     }
     private void start(){
-        String message = "";
+        Queue<String> messages = new LinkedList<>();
+        String message = null;
+        try {
+            message = in.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         while(!message.equals("quit")){
             try {
+                IO.print("Message: " + message);
+                messages.add(message);
                 message = in.readLine();
-                MessageParser.parse(message);
             }
             catch(IOException e){
                 e.printStackTrace();
             }
         }
+        MessageParser.parse(messages.poll());
+
+        while(!X.running){
+            //Busy waiting like a boss, networking has kind of been a slap job on this project I'm sorry to admit
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.print(" ");
+        }
+
+        IO.print("Executing...");
+
+        while(!messages.isEmpty()){
+            MessageParser.parse(messages.poll());
+        }
+
+        X.getInstance().updatePossessions();
 
         receiveMessages();
     }

@@ -185,13 +185,14 @@ public class Menu extends javax.swing.JFrame {
 
         final String ip = hostField.getText();
         X.CLIENT = new Client();
+        X.running = false;
         try{
             X.CLIENT.startConnection(ip,X.PORT);
+            X.launchApp();
         } catch (IOException e) {
             error(e.getMessage());
+            return;
         }
-
-        X.launchApp();
         dispose();
     }
     private boolean initApp(){

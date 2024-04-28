@@ -106,6 +106,8 @@ public class X extends SimpleApplication {
                 new Player("Cyan",TextureHandler.CYAN)
         );
 
+        IO.print(seed+"~");
+
         initializePieces();
         updatePossessions();
         cam.setLocation(turnHandler.getPOV().getLocation());
@@ -116,8 +118,10 @@ public class X extends SimpleApplication {
         for(Player player : turnHandler.getPlayers()){
             player.endTurn();//Updates & initializes stuff, essentially ending Turn 0
         }
+        running = true;
     }
     private void initializePieces(){
+        //if(CLIENT != null) return;
         Player[] players = turnHandler.getPlayers();
         for(Player player : players){
             setSpawn(player);
@@ -194,7 +198,7 @@ public class X extends SimpleApplication {
             }
         }
     };
-    private void updatePossessions(){
+    public void updatePossessions(){
         for(Player p : turnHandler.getPlayers()){
             for(Piece piece : p.getPieces()){
                 piece.updatePossession();
@@ -658,7 +662,7 @@ public class X extends SimpleApplication {
         else if(CLIENT != null) CLIENT.broadcast(message);
     }
     public String getInitString(){
-        String init = "nuke\nseed " + seed+"\n";
+        String init = "seed " + seed + "\nnuke\n";
 
         init += world.getInitString();
         for(Player p : turnHandler.getPlayers()){
@@ -668,9 +672,15 @@ public class X extends SimpleApplication {
         return init+"quit";
     }
     public void nuke(){
+        IO.print("Clearing all map data...");
         world.nuke();
         for(Player p : turnHandler.getPlayers()){
             p.nuke();
+        }
+    }
+    public void updatePlayerPositions(){
+        for(Player p : turnHandler.getPlayers()){
+            p.setLocation(p.getLocation());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.evanshannon.x.model;
 
 import com.evanshannon.x.MathLib;
+import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.buildings.Building;
 import com.evanshannon.x.model.buildings.Flag;
 import com.evanshannon.x.model.pieces.Commander;
@@ -144,5 +145,17 @@ public class Player {
     }
     public void nuke(){
         pieces = new HashSet<>();
+    }
+    public String getColor(){
+        if(texture == TextureHandler.RED) return "Red";
+        if(texture == TextureHandler.YELLOW) return "Yellow";
+        if(texture == TextureHandler.GREEN) return "Green";
+        if(texture == TextureHandler.CYAN) return "Cyan";
+        if(texture == TextureHandler.BLUE) return "Blue";
+        if(texture == TextureHandler.MAGENTA) return "Magenta";
+        if(texture == TextureHandler.BLACK) return "Black";
+        if(texture == TextureHandler.WHITE) return "White";
+
+        return "";
     }
 }

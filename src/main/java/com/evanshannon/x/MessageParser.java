@@ -16,6 +16,7 @@ public class MessageParser {
             }
             case "seed" -> {
                 X.seed = Integer.parseInt(args[0]);
+                IO.print("Seed: " + X.seed);
             }
             case "tp" -> {
                 final Player player = X.getInstance().parsePlayer(Integer.parseInt(args[0]));
@@ -23,13 +24,16 @@ public class MessageParser {
                 final int y = Integer.parseInt(args[2]);
 
                 player.setLocation(new Vector3f(x,3f,y));
+                X.getInstance().updatePlayerPositions();
+                IO.print("Moved player to " + player.getLocation());
             }
             case "build" -> {
                 final int x = Integer.parseInt(args[1]);
                 final int y = Integer.parseInt(args[2]);
+                IO.print("Building at ("+x+","+y+")");
 
                 final Tile tile = X.getInstance().world.getAt(x,y,true);
-                final Player player = args.length > 3 ? X.getInstance().parsePlayer(Integer.parseInt(args[3])) : null;
+                final Player player = X.getInstance().parsePlayer(Integer.parseInt(args[3]));
 
                 switch(args[0]){
                     case "Factory" -> {
@@ -85,6 +89,7 @@ public class MessageParser {
 
                 final Piece piece = X.getInstance().world.getAt(fromX,fromY,false).getPiece();
                 piece.move(toX, toY,false);
+                IO.print("Moved piece from (" + fromX + "," + fromY + ") to (" + toX + "," + toY + ")");
             }
             case "jump" -> {
                 final int fromX = Integer.parseInt(args[0]);
@@ -94,6 +99,7 @@ public class MessageParser {
 
                 final Piece piece = X.getInstance().world.getAt(fromX,fromY,false).getPiece();
                 piece.jump(toX, toY,false);
+                IO.print("Jumped piece from (" + fromX + "," + fromY + ") to (" + toX + "," + toY + ")");
             }
             case "deploy" -> {
                 final int barracksX = Integer.parseInt(args[0]);
@@ -105,6 +111,7 @@ public class MessageParser {
                 final Barracks barracks = (Barracks)(X.getInstance().world.getAt(barracksX,barracksY,false).getBuilding());
                 final Piece piece = barracks.getPiece(index);
                 piece.move(toX,toY,false);
+                IO.print("Deployed piece from (" + barracksX + "," + barracksY + ") to (" + toX + "," + toY + ")");
             }
         }
     }
@@ -130,10 +137,10 @@ public class MessageParser {
         else if(b instanceof Barracks) s = "Barracks";
         else s = "";
 
-        return "build " + s + " " + x + " " + y + b.getOwner();
+        return "build " + s + " " + x + " " + y + " " + X.getInstance().getPlayerIndex(b.getOwner());
     }
     public static String build(Piece piece, final int x, final int y){
-        return "build " + piece.getCode() + " " + x + " " + y + " " + piece.getPlayer();
+        return "build " + piece.getCode() + " " + x + " " + y + " " + X.getInstance().getPlayerIndex(piece.getPlayer());
     }
     public static String seed(int seed){
         return "seed " + seed;

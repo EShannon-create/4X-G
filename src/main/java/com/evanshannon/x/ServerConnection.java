@@ -36,6 +36,7 @@ public class ServerConnection {
     private void receiveMessages(){
         while(X.running) try{
             String message = in.readLine();
+            if(message == null) continue;
             String[] splitMessage = message.split(" ");
             String[] args = Arrays.copyOfRange(splitMessage,1,splitMessage.length);
             String command = splitMessage[0];
