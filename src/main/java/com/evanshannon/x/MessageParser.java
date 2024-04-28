@@ -23,6 +23,7 @@ public class MessageParser {
                 final int x = Integer.parseInt(args[1]);
                 final int y = Integer.parseInt(args[2]);
 
+                IO.print("Moving player from " + player.getLocation());
                 player.setLocation(new Vector3f(x,3f,y));
                 X.getInstance().updatePlayerPositions();
                 IO.print("Moved player to " + player.getLocation());

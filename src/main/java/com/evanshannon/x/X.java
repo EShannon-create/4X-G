@@ -106,9 +106,9 @@ public class X extends SimpleApplication {
                 new Player("Cyan",TextureHandler.CYAN)
         );
 
-        IO.print(seed+"~");
+        //IO.print(seed+"~");
 
-        initializePieces();
+        initializePlayers();
         updatePossessions();
         cam.setLocation(turnHandler.getPOV().getLocation());
         final int x = MathLib.divide((int)cam.getLocation().x,CHUNK_SIZE);
@@ -120,7 +120,7 @@ public class X extends SimpleApplication {
         }
         running = true;
     }
-    private void initializePieces(){
+    private void initializePlayers(){
         //if(CLIENT != null) return;
         Player[] players = turnHandler.getPlayers();
         for(Player player : players){
@@ -500,6 +500,11 @@ public class X extends SimpleApplication {
         guiNode.detachChild(buildGUI);
     }
     public void setSpawn(Player player){
+        if(CLIENT != null){
+            player.setLocation(Vector3f.ZERO);
+            return;
+        }
+
         boolean found = false;
         Tile t = null;
         int x = 0;
@@ -511,8 +516,6 @@ public class X extends SimpleApplication {
             t = world.getAt(x,y,true);
             found = t.isLand() && t.getNorth().isLand() && t.getSouth().isLand() && t.getEast().isLand() && t.getWest().isLand();
         }
-
-        String begin = "";
 
         t.setPiece(new General(player));
 
@@ -679,8 +682,6 @@ public class X extends SimpleApplication {
         }
     }
     public void updatePlayerPositions(){
-        for(Player p : turnHandler.getPlayers()){
-            p.setLocation(p.getLocation());
-        }
+        cam.setLocation(turnHandler.getPOV().getLocation());
     }
 }
