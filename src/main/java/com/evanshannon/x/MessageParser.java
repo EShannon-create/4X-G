@@ -11,6 +11,15 @@ import java.util.Arrays;
 public class MessageParser {
     public static void parse(String command, String[] args){
         switch(command){
+            case "clearflag" -> {
+                X.getInstance().clearFactoryLag();
+            }
+            case "end" -> {
+                if(X.SERVER != null) X.SERVER.endTurn();
+            }
+            case "turn" -> {
+                X.getInstance().newTurn();
+            }
             case "nuke" -> {
                 X.getInstance().nuke();
             }

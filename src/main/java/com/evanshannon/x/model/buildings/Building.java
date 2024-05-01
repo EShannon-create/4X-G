@@ -1,6 +1,8 @@
 package com.evanshannon.x.model.buildings;
 
+import com.evanshannon.x.IO;
 import com.evanshannon.x.TextureHandler;
+import com.evanshannon.x.X;
 import com.evanshannon.x.model.Player;
 import com.evanshannon.x.model.Tile;
 import com.jme3.scene.Node;
@@ -44,8 +46,11 @@ public abstract class Building {
         return food;
     }
     public static int getBuilds(Player player){
+        IO.print(player.getColor()+"...");
+        X.getInstance().updatePossessions();
         int builds = 0;
         for(Building building : ALL_BUILDINGS){
+            IO.print(building.getOwner().getColor());
             if(building instanceof Factory && building.getOwner() == player){
                 builds += BUILDS_PER_FACTORY;
             }

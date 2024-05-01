@@ -66,6 +66,7 @@ public class X extends SimpleApplication {
     private static final float MAX_CAM_HEIGHT = 30f;
     private static final int SPAWN = 75;
     private static final String[] texts = {"No Selection","Farm","Barracks","Factory","Wall","Flag","General","Lieutenant","Rook","Bishop","Knight","Cannon","Pawn"};
+    public static boolean SUSPEND_COMMANDER_CHECKS = false;
 
     public static void main(String[] args) {
         Menu.start();
@@ -98,13 +99,15 @@ public class X extends SimpleApplication {
         initializeHUD();
         initializeInputs();
         turnHandler = new TurnHandler(
-                new Player("Yellow",TextureHandler.YELLOW),
-                new Player("Red",TextureHandler.RED),
-                new Player("Blue",TextureHandler.BLUE),
-                new Player("Green",TextureHandler.GREEN),
-                new Player("Magenta",TextureHandler.MAGENTA),
-                new Player("Cyan",TextureHandler.CYAN)
+                new Player(USERNAME,TextureHandler.YELLOW),
+                new Player(USERNAME,TextureHandler.RED),
+                new Player(USERNAME,TextureHandler.BLUE),
+                new Player(USERNAME,TextureHandler.GREEN),
+                new Player(USERNAME,TextureHandler.MAGENTA),
+                new Player(USERNAME,TextureHandler.CYAN)
         );
+
+        turnHandler.setPOV(COLOR);
 
         //IO.print(seed+"~");
 
@@ -178,7 +181,12 @@ public class X extends SimpleApplication {
         public void onAction(String name, boolean keyPressed, float tps) {
             switch(name){
                 case "G" -> {
-                    if(keyPressed) endTurn();
+                    if(keyPressed && !turnHandler.turnEnd){
+                        endTurn();
+                    }
+                    else if(keyPressed){
+                        IO.print(turnHandler.turnEnd+"");
+                    }
                 }
                 case "R" -> {
                     if(keyPressed){
@@ -672,7 +680,7 @@ public class X extends SimpleApplication {
             if(p != null) init += MessageParser.tp(p,(int)p.getLocation().x,(int)p.getLocation().z)+"\n";
         }
 
-        return init+"quit";
+        return init+"clearflag\nquit";
     }
     public void nuke(){
         IO.print("Clearing all map data...");
@@ -683,5 +691,11 @@ public class X extends SimpleApplication {
     }
     public void updatePlayerPositions(){
         cam.setLocation(turnHandler.getPOV().getLocation());
+    }
+    public void newTurn(){
+        turnHandler.newTurn();
+    }
+    public void clearFactoryLag(){
+        turnHandler.getPOV().clearFactoryLag();
     }
 }

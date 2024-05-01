@@ -54,6 +54,11 @@ public abstract class Piece {
         }
         return null;
     }
+    public static void findCommanders(){
+        for(Piece piece : allPieces){
+            if(piece.getCommander() == null) piece.findCommander();
+        }
+    }
     private boolean containsGeom(Geometry geometry){
         Node model = getModel();
 
@@ -63,7 +68,7 @@ public abstract class Piece {
     public void setLocation(int x, int y){
         this.x = x;
         this.y = y;
-        if(commander == null) findCommander();
+        if(commander == null && !X.SUSPEND_COMMANDER_CHECKS) findCommander();
     }
     public Vector3f getLocation(){
         return new Vector3f(x+0.5f,0.125f,y-0.5f);

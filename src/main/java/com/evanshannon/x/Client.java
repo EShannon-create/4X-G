@@ -1,5 +1,7 @@
 package com.evanshannon.x;
 
+import com.evanshannon.x.model.pieces.Piece;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,17 +17,22 @@ public class Client {
     private PrintWriter out;
     private BufferedReader in;
 
-    public void startConnection(String ip, int port) throws IOException {
+    public boolean startConnection(String ip, int port) throws IOException {
         IO.print("Attempting to connect to " + ip + "!");
         clientSocket = new Socket(ip, port);
         IO.print("Connected successfully!");
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+        out.println(X.COLOR);
+        if(in.readLine().equals("reject")) return false;
+
         Thread thread = new Thread(() -> start());
         thread.start();
+        return true;
     }
     private void start(){
+        X.SUSPEND_COMMANDER_CHECKS = true;
         Queue<String> messages = new LinkedList<>();
         String message = null;
         try {
@@ -62,6 +69,9 @@ public class Client {
         }
 
         X.getInstance().updatePossessions();
+
+        X.SUSPEND_COMMANDER_CHECKS = false;
+        Piece.findCommanders();
 
         receiveMessages();
     }

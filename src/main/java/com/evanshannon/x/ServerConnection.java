@@ -19,6 +19,19 @@ public class ServerConnection {
     }
 
     public void start(){
+        try {
+            String color = in.readLine();
+            if(X.SERVER.claim(color,this)) out.println("accept");
+            else{
+                out.println("reject");
+                stop();
+                X.SERVER.restart(this);
+            }
+        }
+        catch(IOException e){
+            out.println("reject");
+        }
+
         out.println(X.getInstance().getInitString());
 
         receiveMessages();

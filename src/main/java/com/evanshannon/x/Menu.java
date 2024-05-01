@@ -187,8 +187,12 @@ public class Menu extends javax.swing.JFrame {
         X.CLIENT = new Client();
         X.running = false;
         try{
-            X.CLIENT.startConnection(ip,X.PORT);
-            X.launchApp();
+            final boolean run = X.CLIENT.startConnection(ip,X.PORT);
+            if(run) X.launchApp();
+            else{
+                error("Another player already picked that color! Try again!");
+                return;
+            }
         } catch (IOException e) {
             error(e.getMessage());
             return;
@@ -202,7 +206,7 @@ public class Menu extends javax.swing.JFrame {
         X.RESOLUTION[1] = y;
         System.out.println("Resolution: " + X.RESOLUTION[0] + "x" + X.RESOLUTION[1]);
 
-        final String username = usernameText.getText();
+        final String username = usernameField.getText();
         if(username.isBlank()){
             error("Username must not be blank!");
             return false;

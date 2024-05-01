@@ -6,6 +6,7 @@ public class TurnHandler {
     private int turn;
     Player[] players;
     private int playerIndex;
+    boolean turnEnd = false;
 
     public TurnHandler(Player... players){
         this.players = players;
@@ -13,14 +14,14 @@ public class TurnHandler {
         playerIndex = 0;
     }
 
-    public int getTurn(){
-        return turn;
+    public String getTurn(){
+        return turn + (turnEnd ? " (Ended)" : "");
     }
     public void endTurn(){
-        getPOV().endTurn();
-        do{
-            next();
-        } while(!getPOV().beginTurn());
+        final boolean was = turnEnd;
+        turnEnd = true;
+        if(X.CLIENT != null && !was) X.CLIENT.broadcast("end");
+        else if(X.SERVER != null && !was) X.SERVER.endTurn();
     }
     private void next(){
         playerIndex++;
@@ -32,7 +33,27 @@ public class TurnHandler {
     public Player getPOV(){
         return players[playerIndex];
     }
+    public void setPOV(String color){
+        playerIndex = switch(color){
+            default -> -1;
+            case "Yellow" -> 0;
+            case "Red" -> 1;
+            case "Blue" -> 2;
+            case "Green" -> 3;
+            case "Magenta" -> 4;
+            case "Cyan" -> 5;
+        };
+    }
     public Player[] getPlayers(){
         return players;
+    }
+    public void newTurn(){
+        IO.print("New turn!");
+        turnEnd = false;
+        for(int i = 0; i < players.length; i++){
+            next();
+        }
+        getPOV().beginTurn();
+        IO.print("Turn End: " + turnEnd);
     }
 }

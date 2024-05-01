@@ -1,5 +1,6 @@
 package com.evanshannon.x.model;
 
+import com.evanshannon.x.IO;
 import com.evanshannon.x.MathLib;
 import com.evanshannon.x.TextureHandler;
 import com.evanshannon.x.model.buildings.Building;
@@ -42,9 +43,13 @@ public class Player {
         moved.add(commander);
     }
     public boolean beginTurn(){
-        if(pieces.size() == 0) return false;
+        if(pieces.size() == 0){
+            return false;
+        }
         if(factoryLag > 0){
+            builds = 0;
             factoryLag--;
+            IO.print("Factory Lag: " + factoryLag);
             return false;
         }
         return true;
@@ -142,6 +147,10 @@ public class Player {
     }
     public void onFactoryBuild(){
         factoryLag = FACTORY_LAG;
+    }
+    public void clearFactoryLag(){
+        factoryLag = 0;
+        builds = findBuilds();
     }
     public void nuke(){
         pieces = new HashSet<>();
