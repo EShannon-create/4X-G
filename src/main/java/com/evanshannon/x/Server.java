@@ -10,7 +10,7 @@ public class Server {
     private static final int CAPACITY = 5;
 
     private String[] color = new String[6];
-    private int connected = 1;
+    private int connected = 1;//The player running the server is connected, of course!
     private int turnsEnded = 0;
 
     public void start(int port) throws IOException {
